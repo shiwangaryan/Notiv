@@ -63,14 +63,14 @@ export const users = pgTable(
   ]
 );
 
-// export const usersInAuth = pgTable("users_in_auth", {
-//   id: uuid()
-//     .primaryKey()
-//     .references(() => users.id, { onDelete: "cascade" }),
-//   fullName: text("full_name"),
-//   avatarUrl: text("avatar_url"),
-//   metadata: jsonb("metadata"),
-// });
+export const usersInAuth = pgTable("users_in_auth", {
+  id: uuid()
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  fullName: text("full_name"),
+  avatarUrl: text("avatar_url"),
+  metadata: jsonb("metadata"),
+});
 
 export const customers = pgTable(
   "customers",
