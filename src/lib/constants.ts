@@ -14,99 +14,99 @@ export const CLIENTS = [
 
 export const USERS = [
   {
-    name: "Alice",
-    message:
-      "Cypress has been a game-changer for our team. With its reliable end-to-end testing, we catch bugs early, leading to faster development cycles and improved collaboration.",
-  },
-  {
     name: "Bob",
     message:
-      "I used to spend hours debugging frontend issues, but Cypress simplified everything. Now, I'm more productive, and my colleagues can trust our code thanks to Cypress.",
+      "Notiv has been a game-changer for our team. With its reliable end-to-end testing, we catch bugs early, leading to faster development cycles and improved collaboration.",
   },
   {
-    name: "Charlie",
+    name: "Alice",
     message:
-      "Cypress has transformed the way we work. Our QA and development teams are on the same page, and our productivity has skyrocketed. It's a must-have tool.",
-  },
-  {
-    name: "David",
-    message:
-      "I was skeptical at first, but Cypress exceeded my expectations. Our project timelines have improved, and collaboration between teams is seamless.",
+      "I used to spend hours debugging frontend issues, but Notiv simplified everything. Now, I'm more productive, and my colleagues can trust our code thanks to Notiv.",
   },
   {
     name: "Ella",
     message:
-      "Cypress made writing and running tests a breeze. Our team's productivity has never been higher, and we're delivering more reliable software.",
-  },
-  {
-    name: "Frank",
-    message:
-      "Thanks to Cypress, we've eliminated testing bottlenecks. Our developers and testers collaborate effortlessly, resulting in quicker releases.",
+      "Notiv has transformed the way we work. Our QA and development teams are on the same page, and our productivity has skyrocketed. It's a must-have tool.",
   },
   {
     name: "Grace",
     message:
-      "Cypress has improved our development process significantly. We now have more time for innovation, and our products are of higher quality.",
+      "I was skeptical at first, but Notiv exceeded my expectations. Our project timelines have improved, and collaboration between teams is seamless.",
   },
   {
-    name: "Hank",
+    name: "Charlie",
     message:
-      "Cypress's user-friendly interface made it easy for our non-technical team members to contribute to testing. Our workflow is much more efficient now.",
+      "Notiv made writing and running tests a breeze. Our team's productivity has never been higher, and we're delivering more reliable software.",
+  },
+  {
+    name: "Frank",
+    message:
+      "Thanks to Notiv, we've eliminated testing bottlenecks. Our developers and testers collaborate effortlessly, resulting in quicker releases.",
+  },
+  {
+    name: "David",
+    message:
+      "Notiv has improved our development process significantly. We now have more time for innovation, and our products are of higher quality.",
   },
   {
     name: "Ivy",
     message:
-      "Our team's collaboration improved immensely with Cypress. We catch issues early, leading to less friction and quicker feature deployments.",
+      "Our team's collaboration improved immensely with Notiv. We catch issues early, leading to less friction and quicker feature deployments.",
+  },
+  {
+    name: "Hank",
+    message:
+      "Notiv's user-friendly interface made it easy for our non-technical team members to contribute to testing. Our workflow is much more efficient now.",
   },
   {
     name: "Jack",
     message:
-      "Cypress's robust testing capabilities have elevated our development standards. We work more harmoniously, and our releases are more reliable.",
-  },
-  {
-    name: "Katherine",
-    message:
-      "Cypress is a lifesaver for our cross-functional teams. We're more productive, and there's a shared sense of responsibility for product quality.",
+      "Notiv's robust testing capabilities have elevated our development standards. We work more harmoniously, and our releases are more reliable.",
   },
   {
     name: "Liam",
     message:
-      "Cypress has helped us maintain high standards of quality. Our team's collaboration has improved, resulting in faster development cycles.",
-  },
-  {
-    name: "Mia",
-    message:
-      "Cypress is a powerful tool that improved our productivity and collaboration. It's now an integral part of our development process.",
+      "Notiv has helped us maintain high standards of quality. Our team's collaboration has improved, resulting in faster development cycles.",
   },
   {
     name: "Nathan",
     message:
-      "Cypress's user-friendly interface and detailed reporting have made testing a breeze. Our team's productivity is at an all-time high.",
+      "Notiv's user-friendly interface and detailed reporting have made testing a breeze. Our team's productivity is at an all-time high.",
+  },
+  {
+    name: "Katherine",
+    message:
+      "Notiv is a lifesaver for our cross-functional teams. We're more productive, and there's a shared sense of responsibility for product quality.",
+  },
+  {
+    name: "Mia",
+    message:
+      "Notiv is a powerful tool that improved our productivity and collaboration. It's now an integral part of our development process.",
   },
   {
     name: "Olivia",
     message:
-      "We saw immediate benefits in terms of productivity and collaboration after adopting Cypress. It's an essential tool for our development workflow.",
+      "We saw immediate benefits in terms of productivity and collaboration after adopting Notiv. It's an essential tool for our development workflow.",
   },
   {
-    name: "Paul",
+    name: "Priyanka",
     message:
-      "Cypress has streamlined our testing process and brought our teams closer. We're more efficient and deliver better results.",
+      "Notiv has streamlined our testing process and brought our teams closer. We're more efficient and deliver better results.",
   },
   {
     name: "Quinn",
     message:
-      "Cypress has been a game-changer for us. Our productivity and collaboration have improved significantly, leading to better software.",
+      "Notiv has been a game-changer for us. Our productivity and collaboration have improved significantly, leading to better software.",
   },
   {
     name: "Rachel",
     message:
-      "Thanks to Cypress, our testing process is now a seamless part of our development cycle. Our teams collaborate effortlessly.",
+      "Thanks to Notiv, our testing process is now a seamless part of our development cycle. Our teams collaborate effortlessly.",
   },
   {
-    name: "Sam",
+    name: "Samara",
     message:
-      "Cypress is a fantastic tool that has revolutionized our workflow. Our productivity and collaboration have reached new heights.",
+      "Notiv is a fantastic tool that has revolutionized our workflow. Our productivity and collaboration have reached new heights.",
   },
 ];
 
