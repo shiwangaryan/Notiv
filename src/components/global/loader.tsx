@@ -16,7 +16,7 @@ const Loader = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <Lottie options={defaultOptions} height={60} />
+      <Lottie options={defaultOptions} height={50} />
     </div>
   );
 };

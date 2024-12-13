@@ -236,10 +236,10 @@ const Header = () => {
           </div>
         </Link>
         <Link href={"/signup"}>
-          <div className="p-[1px] rounded-[6px] w-full bg-white/30">
+          <div className="p-[1.5px] rounded-[6px] w-full bg-white/40">
             <Button
-              variant="secondary"
-              className="px-7 hidden sm:block  hover:bg-black/70 transition-all duration-200 ease-in-out "
+              variant="default"
+              className="px-7 hidden sm:block bg-white/95 hover:bg-white/80 transition-all duration-200 ease-in-out "
             >
               Sign Up
             </Button>

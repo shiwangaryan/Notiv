@@ -19,8 +19,6 @@ import NotivLogo from "../../../../public/notivlogo.svg";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/global/loader";
-import Loading from "../../../../public/loading.json";
-import { twMerge } from "tailwind-merge";
 import { actionLoginUser } from "@/lib/server-action/auth-actions";
 
 const LoginPage = () => {
@@ -84,7 +82,7 @@ const LoginPage = () => {
           disabled={isLoading}
           control={form.control}
           name="email"
-          render={(field) => (
+          render={({ field }) => (
             <FormItem>
               <FormControl>
                 <Input type="email" placeholder="Email" {...field} />
@@ -97,7 +95,7 @@ const LoginPage = () => {
           disabled={isLoading}
           control={form.control}
           name="password"
-          render={(field) => (
+          render={({ field }) => (
             <FormItem>
               <FormControl>
                 <Input type="password" placeholder="Password" {...field} />
@@ -108,17 +106,18 @@ const LoginPage = () => {
         ></FormField>
         {submitError && <FormMessage>{submitError}</FormMessage>}
         <div
-          className="w-full
+          className="w-full flex flex-col justify-center items-center
+              h-[50px]
         hover:p-[2.5px]
         rounded-[8px]
         bg-gradient-to-r
         from-primary-blue-200
         to-primary-purple-600
-        transition-all duration-300 ease-in-out"
+        transition-all duration-250 ease-in-out"
         >
           <Button
             type="submit"
-            className="w-full p-6 text-[17px] hover:bg-white"
+            className="w-full h-full text-[15px] hover:bg-white"
             size="lg"
             disabled={isLoading}
           >
