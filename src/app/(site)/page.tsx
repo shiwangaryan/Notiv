@@ -238,7 +238,7 @@ const HomePage = () => {
                     </div>
                   }
                   cardContent={
-                    <p className="dark:text-washed-purple-800">
+                    <p className="text-white/87">
                       {arrIndex === 0
                         ? USERS[index % 10].message
                         : USERS[(index % 10) + 9].message}
