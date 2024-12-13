@@ -32,7 +32,7 @@ const HomePage = () => {
             variant="secondary"
             className="w-full rounded-[10px] p-6 text-2xl bg-background"
           >
-            Get Cypress Free
+            Get Notiv Free
           </Button>
         </div>
         <div

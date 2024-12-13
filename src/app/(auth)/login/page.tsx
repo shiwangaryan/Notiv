@@ -20,6 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/global/loader";
 import Loading from "../../../../public/loading.json";
+import { twMerge } from "tailwind-merge";
+import { actionLoginUser } from "@/lib/server-action/auth-actions";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -35,7 +37,14 @@ const LoginPage = () => {
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (
     formData
-  ) => {};
+  ) => {
+    const { error } = await actionLoginUser(formData);
+    if (error) {
+      form.reset();
+      setSubmiteError(error.message);
+    }
+    router.replace("/dashboard");
+  };
   return (
     <Form {...form}>
       <form
@@ -65,7 +74,7 @@ const LoginPage = () => {
           ml-2
           "
           >
-            notiv
+            notiv.
           </span>
         </Link>
         <FormDescription className="text-foreground/60">
@@ -98,14 +107,24 @@ const LoginPage = () => {
           )}
         ></FormField>
         {submitError && <FormMessage>{submitError}</FormMessage>}
-        <Button
-          type="submit"
-          className="w-full p-6 text-[18px]"
-          size="lg"
-          disabled={isLoading}
+        <div
+          className="w-full
+        hover:p-[2.5px]
+        rounded-[8px]
+        bg-gradient-to-r
+        from-primary-blue-200
+        to-primary-purple-600
+        transition-all duration-300 ease-in-out"
         >
-          {!isLoading ? "Login" : <Loader />}
-        </Button>
+          <Button
+            type="submit"
+            className="w-full p-6 text-[17px] hover:bg-white"
+            size="lg"
+            disabled={isLoading}
+          >
+            {!isLoading ? "Login" : <Loader />}
+          </Button>
+        </div>
         <span className="self-center">
           Don't have an account?
           <Link href={"/signup"} className="text-primary-blue-300">
