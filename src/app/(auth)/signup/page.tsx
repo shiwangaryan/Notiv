@@ -56,9 +56,11 @@ const Signup = () => {
 
   const onSubmit = async ({ email, password }: z.infer<typeof FormSchema>) => {
     const { error } = await actionSignupUser({ email, password });
+    console.log(`error in submitting: ${error}`);
     if (error) {
       form.reset();
       setSubmitError(error.message);
+      setConfirmation(false);
       return;
     }
     setConfirmation(true);
@@ -167,7 +169,7 @@ const Signup = () => {
         {submitError && <FormMessage>{submitError}</FormMessage>}
         <span className="self-center">
           Already have an account?
-          <Link href={"/signup"} className="text-primary-blue-300">
+          <Link href={"/login"} className="text-primary-blue-300">
             {" "}
             Login
           </Link>
@@ -181,7 +183,7 @@ const Signup = () => {
               </AlertTitle>
               <AlertDescription>
                 {codeExchangeError ||
-                  "An email confirmation link has been sent. Please Verify !"}
+                  "An email confirmation link has been sent.\nPlease Verify !"}
               </AlertDescription>
             </Alert>
           </>
