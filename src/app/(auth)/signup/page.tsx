@@ -57,7 +57,7 @@ const Signup = () => {
   const onSubmit = async ({ email, password }: z.infer<typeof FormSchema>) => {
     const { error } = await actionSignupUser({ email, password });
     console.log(`error in submitting: ${error}`);
-    if (error) {
+    if (error !== null) {
       form.reset();
       setSubmitError(error.message);
       setConfirmation(false);
@@ -154,11 +154,12 @@ const Signup = () => {
         bg-gradient-to-r
         from-primary-blue-200
         to-primary-purple-600
-        transition-all duration-250 ease-in-out"
+        transition-all duration-300 ease-in-out"
             >
               <Button
                 type="submit"
-                className=" w-full h-full text-[15px] hover:bg-white"
+                className=" w-full h-full text-[15px] hover:bg-white/95
+                transition-all duration-300 ease-in-out"
                 disabled={isLoading}
               >
                 {!isLoading ? "Create Account" : <Loader />}
