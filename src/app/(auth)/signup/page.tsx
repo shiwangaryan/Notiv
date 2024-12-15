@@ -40,7 +40,7 @@ const Signup = () => {
     () =>
       clsx("bg-black border-[2px] border-primary-blue-100", {
         "bg-red-500/10": codeExchangeError,
-        "bg-red-500/50": codeExchangeError,
+        "border-red-500/60": codeExchangeError,
         "text-red-700": codeExchangeError,
       }),
     []
@@ -167,7 +167,9 @@ const Signup = () => {
             </div>
           </>
         )}
-        {submitError && <FormMessage>{submitError}</FormMessage>}
+        {submitError && (
+          <FormMessage className="text-red-500">{submitError}</FormMessage>
+        )}
         <span className="self-center">
           Already have an account?
           <Link href={"/login"} className="text-primary-blue-300">

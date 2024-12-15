@@ -225,21 +225,30 @@ const Header = () => {
         <Link href={"/login"}>
           <div
             style={{ backgroundColor: "#212124" }}
-            className="p-[1px] rounded-[6px] w-full bg-gradient-to-r from-primary-purple-300 to-primary-blue-100"
+            className="p-[1px] rounded-[6px] w-[100px] 
+            bg-gradient-to-r 
+            from-primary-purple-300 to-primary-blue-100"
           >
             <Button
               variant="outline"
-              className="px-7 hidden sm:block hover:bg-black/85 transition-all duration-200 ease-in-out "
+              className="px-7 w-full hover:bg-black/85 
+              transition-all duration-200 ease-in-out "
             >
               Login
             </Button>
           </div>
         </Link>
         <Link href={"/signup"}>
-          <div className="p-[1.5px] rounded-[6px] w-full bg-white/40">
+          <div
+            className="p-[1.5px] rounded-[6px] 
+            hidden sm:block
+          bg-white/40"
+          >
             <Button
               variant="default"
-              className="px-7 hidden sm:block bg-white/95 hover:bg-white/80 transition-all duration-200 ease-in-out "
+              className="px-7
+              bg-white/95 hover:bg-white/80 
+              transition-all duration-200 ease-in-out "
             >
               Sign Up
             </Button>

@@ -19,14 +19,12 @@ export async function actionSignupUser({
 }: z.infer<typeof FormSchema>) {
   const supabase = await createServerSupabaseClient();
 
-  // let { data: users, error } = await supabase
-  //   .from("users")
-  //   .select()
-  //   .eq("email", "shiwangaryan@gmail.com");
-  // console.log(`email:${email}, type:${typeof email}`);
+  let { data: users, error } = await supabase
+    .from("users")
+    .select()
+    .eq("email", "shiwangaryan@gmail.com");
 
-  // if (users?.length) return { error: { message: "User already exists", error } };
-  // console.log(`user exist: ${users} and error: ${error}`);
+  if (users?.length) return { error: { message: "User already exists", error } };
 
   const response = await supabase.auth.signUp({
     email,
@@ -35,12 +33,7 @@ export async function actionSignupUser({
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}api/auth/callback`,
     },
   });
-  let { data: users, error } = await supabase
-    .from("users")
-    .select()
-    .eq("email", email);
-  console.log(`user exist: ${users} and error: ${error}`);
-  console.log(`user mail: ${response.data.user?.email}`);
+
 
   return response;
 }

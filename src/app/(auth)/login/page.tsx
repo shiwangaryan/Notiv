@@ -40,6 +40,7 @@ const LoginPage = () => {
     if (error !== null) {
       form.reset();
       setSubmiteError(error.message);
+      return;
     }
     router.replace("/dashboard");
   };
