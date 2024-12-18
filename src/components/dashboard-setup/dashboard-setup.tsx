@@ -1,5 +1,7 @@
+"use client";
 import { AuthUser } from "@supabase/supabase-js";
-import React from "react";
+import React, { useState } from "react";
+import { v4 } from "uuid";
 import {
   Card,
   CardContent,
@@ -7,13 +9,111 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { EmojiPicker } from "../global/emoji-picker";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Subscription, Workspace } from "@/lib/supabase/supabase.types";
+import { SubmitHandler, FieldValues, useForm } from "react-hook-form";
+import { z } from "zod";
+import { CreateWorkspaceFormSchema } from "@/lib/types";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/router";
+import { Button } from "../ui/button";
+import { Loader } from "lucide-react";
 
 interface DashboardSetupProps {
   user: AuthUser;
-  subscription: {} | null;
+  subscription: Subscription | null;
 }
 
-const DashboardSetup = () => {
+const DashboardSetup: React.FC<DashboardSetupProps> = ({
+  user,
+  subscription,
+}) => {
+  const { toast } = useToast();
+  const router = useRouter();
+  const { dispatch } = useAppState();
+  const supabase = createClientComponent();
+  const [selectedEmoji, setSelectedEmoji] = useState("💼");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting: isLoading, errors },
+  } = useForm<FieldValues>({
+    mode: "onChange",
+    defaultValues: {
+      logo: "",
+      workspaceName: "",
+    },
+  });
+
+  const onSubmit: SubmitHandler<
+    z.infer<typeof CreateWorkspaceFormSchema>
+  > = async (value) => {
+    const file = value.logo?.[0];
+    let filePath = null;
+    const workspaceUUID = v4();
+    console.log(file);
+
+    if (file) {
+      try {
+        const { data, error } = await supabase.storage
+          .from("workspace-logos")
+          .upload(`workspaceLogo.${workspaceUUID}`, file, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+        if (error) throw new Error(error.toString());
+        filePath = data.path;
+      } catch (error) {
+        console.log(`Error uploading file: ${error}`);
+        toast({
+          variant: "destructive",
+          title: "Error! Could not upload your workspace logo",
+        });
+      }
+    }
+    try {
+      const newWorkspace: Workspace = {
+        data: null,
+        createdAt: new Date().toISOString(),
+        iconId: selectedEmoji,
+        id: workspaceUUID,
+        inTrash: "",
+        title: value.workspaceName,
+        workshpaceOwner: user.id,
+        logo: filePath || null,
+        bannerUrl: "",
+      };
+      const { data, error: createError } = await createWorkspace(newWorkspace);
+      if (createError) {
+        throw new Error(createError.toString());
+      }
+      dispatch({
+        type: "ADD_WORKSPACE",
+        payload: { ...newWorkspace, folders: [] },
+      });
+
+      toast({
+        title: "Workspace created !",
+        description: `${newWorkspace.title} has been created successfully`,
+      });
+
+      router.replace(`/dashboard/${newWorkspace.id}`);
+    } catch (error) {
+      console.log(`Error creating workspace: ${error}`);
+      toast({
+        variant: "destructive",
+        title: "Could not create workspace",
+        description:
+          "Oops! Something went wrong, and we couldn't create your workspace. Try again or come back later.",
+      });
+    } finally {
+      reset();
+    }
+  };
+
   return (
     <Card
       className="w-[800px]
@@ -28,7 +128,77 @@ const DashboardSetup = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form></form>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div
+            className="flex
+          flex-col gap-4"
+          >
+            <div
+              className="flex
+            items-center
+             gap-4"
+            >
+              <div className="text-5xl">
+                <EmojiPicker getValue={(emoji) => setSelectedEmoji(emoji)}>
+                  {selectedEmoji}
+                </EmojiPicker>
+              </div>
+              <div className="w-full">
+                <Label
+                  htmlFor="workspaceName"
+                  className="text-sm
+                text-muted-foreground"
+                >
+                  Name
+                </Label>
+                <Input
+                  id="workspaceName"
+                  type="text"
+                  placeholder="Workspace Name"
+                  disabled={isLoading}
+                  {...register("workspaceName", {
+                    required: "Workspace name is required",
+                  })}
+                />
+                <small className="text-red-600">
+                  {errors?.workspaceName?.message?.toString()}
+                </small>
+              </div>
+            </div>
+            <div>
+              <Label
+                htmlFor="logo"
+                className="text-sm
+                text-muted-foreground"
+              >
+                Workspace Logo
+              </Label>
+              <Input
+                id="logo"
+                type="file"
+                accept="image/*"
+                placeholder="Workspace Name"
+                // disabled={isLoading || subscription?.status !== "active"}
+                {...register("logo", {
+                  required: "Workspace name is required",
+                })}
+              />
+              <small className="text-red-600">
+                {errors?.logo?.message?.toString()}
+              </small>
+              {subscription?.status !== "active" && (
+                <small className="text-muted-foreground block">
+                  To customize your workspace, you need to be on a Pro Plan
+                </small>
+              )}
+            </div>
+            <div className="self-end">
+              <Button disabled={isLoading} type="submit">
+                {!isLoading ? "Create Workspace" : <Loader />}
+              </Button>
+            </div>
+          </div>
+        </form>
       </CardContent>
     </Card>
   );

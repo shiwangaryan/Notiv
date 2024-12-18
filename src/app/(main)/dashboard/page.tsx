@@ -1,6 +1,7 @@
 import DashboardSetup from "@/components/dashboard-setup/dashboard-setup";
 import { createServerSupabaseClient } from "@/lib/supabase/create-client";
 import db from "@/lib/supabase/db";
+import { getUserSubscriptionStatus } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -16,6 +17,7 @@ const DashboardPage = async () => {
   });
 
   const {data: subscription, error: subscriptionError}= await getUserSubscriptionStatus(user.id);
+  if(subscriptionError) return
 
   if (!workspace)
     return (
@@ -27,7 +29,11 @@ const DashboardPage = async () => {
     justify-center
     items-center"
       >
-        <DashboardSetup></DashboardSetup>
+        <DashboardSetup
+        user= {user}
+        subscription={subscription}>
+
+        </DashboardSetup>
       </div>
     );
 
