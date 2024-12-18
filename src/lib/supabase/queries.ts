@@ -1,12 +1,16 @@
 "use server";
 
 import db from "./db";
-
-("use server");
 import { validate } from "uuid";
-import { files, folders, users, workspaces } from "../../../migrations/schema";
+import {
+  files,
+  folders,
+  prices,
+  users,
+  workspaces,
+} from "../../../migrations/schema";
 import { File, Folder, Subscription, User, Workspace } from "./supabase.types";
-import { and, eq, ilike, notExists } from "drizzle-orm";
+import { and, eq, ilike, InferSelectModel, notExists } from "drizzle-orm";
 import { collaborators } from "./schema";
 import { revalidatePath } from "next/cache";
 
@@ -152,7 +156,7 @@ export const getPrivateWorkspaces = async (userId: string) => {
         ),
         eq(workspaces.workspaceOwner, userId)
       )
-    )) as workspace[];
+    )) as Workspace[];
   return privateWorkspaces;
 };
 
@@ -173,7 +177,7 @@ export const getCollaboratingWorkspaces = async (userId: string) => {
     .from(users)
     .innerJoin(collaborators, eq(users.id, collaborators.userId))
     .innerJoin(workspaces, eq(collaborators.workspaceId, workspaces.id))
-    .where(eq(users.id, userId))) as workspace[];
+    .where(eq(users.id, userId))) as Workspace[];
   return collaboratedWorkspaces;
 };
 
@@ -194,7 +198,7 @@ export const getSharedWorkspaces = async (userId: string) => {
     .from(workspaces)
     .orderBy(workspaces.createdAt)
     .innerJoin(collaborators, eq(workspaces.id, collaborators.workspaceId))
-    .where(eq(workspaces.workspaceOwner, userId))) as workspace[];
+    .where(eq(workspaces.workspaceOwner, userId))) as Workspace[];
   return sharedWorkspaces;
 };
 
@@ -260,12 +264,15 @@ export const getActiveProductsWithPrice = async () => {
 
       with: {
         prices: {
-          where: (pri, { eq }) => eq(pri.active, true),
+          where: (
+            pri: InferSelectModel<typeof prices>,
+            { eq }: { eq: (a: any, b: any) => boolean }
+          ) => eq(pri.active, true),
         },
       },
     });
     if (res.length) return { data: res, error: null };
-    return { data: [], error: null };
+    return { data: [], error: "No such found" };
   } catch (error) {
     console.log(error);
     return { data: [], error };
@@ -319,7 +326,7 @@ export const updateFile = async (file: Partial<File>, fileId: string) => {
 };
 
 export const updateWorkspace = async (
-  workspace: Partial<workspace>,
+  workspace: Partial<Workspace>,
   workspaceId: string
 ) => {
   if (!workspaceId) return;

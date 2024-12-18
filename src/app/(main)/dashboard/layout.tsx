@@ -1,16 +1,21 @@
-import React from 'react'
+import AppStateProvider from "@/lib/providers/state-provider";
+import React from "react";
 
 interface LayoutProps {
-    children: React.ReactNode;
-    params: any;
+  children: React.ReactNode;
+  params: any;
 }
 
-const Layout: React.FC<LayoutProps> = ({children, params}) => {
+const Layout: React.FC<LayoutProps> = ({ children, params }) => {
   return (
-    <main className='flex
+    <main
+      className="flex
     overflow-hidden
-    h-screen'>{children}</main>
-  )
-}
+    h-screen"
+    >
+      <AppStateProvider>{children}</AppStateProvider>
+    </main>
+  );
+};
 
-export default Layout
+export default Layout;

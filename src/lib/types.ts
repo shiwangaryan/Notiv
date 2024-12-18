@@ -30,5 +30,5 @@ export const CreateWorkspaceFormSchema = z.object({
     .string()
     .describe("Workspace Name")
     .min(3, "Minimum 3 character workspace name is required"),
-  file: z.any(),
+  logo: z.any(),
 });

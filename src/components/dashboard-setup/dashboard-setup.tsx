@@ -17,9 +17,12 @@ import { SubmitHandler, FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { CreateWorkspaceFormSchema } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { Loader } from "lucide-react";
+import { useAppState } from "@/lib/providers/state-provider";
+import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabase";
+import { createWorkspace } from "@/lib/supabase/queries";
 
 interface DashboardSetupProps {
   user: AuthUser;
@@ -33,14 +36,14 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
   const { toast } = useToast();
   const router = useRouter();
   const { dispatch } = useAppState();
-  const supabase = createClientComponent();
+  const supabase = createClientSupabaseClient();
   const [selectedEmoji, setSelectedEmoji] = useState("💼");
   const {
     register,
     handleSubmit,
     reset,
     formState: { isSubmitting: isLoading, errors },
-  } = useForm<FieldValues>({
+  } = useForm<z.infer<typeof CreateWorkspaceFormSchema>>({
     mode: "onChange",
     defaultValues: {
       logo: "",
@@ -82,13 +85,13 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
         id: workspaceUUID,
         inTrash: "",
         title: value.workspaceName,
-        workshpaceOwner: user.id,
+        workspaceOwner: user.id,
         logo: filePath || null,
         bannerUrl: "",
       };
       const { data, error: createError } = await createWorkspace(newWorkspace);
       if (createError) {
-        throw new Error(createError.toString());
+        throw new Error();
       }
       dispatch({
         type: "ADD_WORKSPACE",

@@ -8,8 +8,8 @@ if (!process.env.DATABASE_URL) {
 
 export default defineConfig({
   out: "./migrations",
-  //   schema: "./migrations/schema.ts",
-  schema: "./src/lib/supabase/schema.ts",
+  schema: "./migrations/schema.ts",
+  // schema: "./src/lib/supabase/schema.ts",
   dialect: "postgresql",
   //   driver: "pg",
   dbCredentials: {

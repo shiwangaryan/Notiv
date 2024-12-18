@@ -22,6 +22,20 @@
       "when": 1733855701279,
       "tag": "0002_confused_shockwave",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1734541647127,
+      "tag": "0003_chief_hedge_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1734541687016,
+      "tag": "0004_chubby_black_crow",
+      "breakpoints": true
     }
   ]
 }

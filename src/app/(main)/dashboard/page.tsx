@@ -13,13 +13,14 @@ const DashboardPage = async () => {
 
   if (!user) return;
   const workspace = await db.query.workspaces.findFirst({
-    where: (workspace, { eq }) => eq(workspace.workshpaceOwner, user.id),
+    where: (workspace, { eq }) => eq(workspace.workspaceOwner, user.id),
   });
 
-  const {data: subscription, error: subscriptionError}= await getUserSubscriptionStatus(user.id);
-  if(subscriptionError) return
+  const { data: subscription, error: subscriptionError } =
+    await getUserSubscriptionStatus(user.id);
+  if (subscriptionError) return;
 
-  if (!workspace)
+  if (!workspace) {
     return (
       <div
         className="bg-background
@@ -29,13 +30,10 @@ const DashboardPage = async () => {
     justify-center
     items-center"
       >
-        <DashboardSetup
-        user= {user}
-        subscription={subscription}>
-
-        </DashboardSetup>
+        <DashboardSetup user={user} subscription={subscription} />
       </div>
     );
+  }
 
   redirect(`/dashboard/${workspace.id}`);
 };
