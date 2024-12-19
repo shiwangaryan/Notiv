@@ -7,7 +7,13 @@ interface LayoutProps {
   params: any;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, params }) => {
+const Layout: React.FC<LayoutProps> = async props => {
+  const params = await props.params;
+
+  const {
+    children
+  } = props;
+
   return (
     <main
       className="flex overflow-hidden

@@ -31,8 +31,8 @@ export const createWorkspace = async (workspace: Workspace) => {
     const response = await db.insert(workspaces).values(workspace);
     return { data: null, error: null };
   } catch (error) {
-    console.log(error);
-    return { data: null, error: "Error" };
+    console.log(`Error creating workspace: ${error}`);
+    return { data: null, error: `Error in creating wokspace: ${error}` };
   }
 };
 
@@ -46,7 +46,7 @@ export const getFolders = async (workspaceId: string) => {
   if (!isValid)
     return {
       data: null,
-      error: "Error",
+      error: "Error, the wokspaceId is not valid",
     };
 
   try {
@@ -57,7 +57,8 @@ export const getFolders = async (workspaceId: string) => {
       .where(eq(folders.workspaceId, workspaceId));
     return { data: results, error: null };
   } catch (error) {
-    return { data: null, error: "Error" };
+    console.log(`Error fetching folder: ${error}`);
+    return { data: null, error: `Error fetching folder: ${error}` };
   }
 };
 
