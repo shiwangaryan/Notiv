@@ -9,11 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { EmojiPicker } from "../global/emoji-picker";
+import EmojiPicker from "../global/emoji-picker";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Subscription, Workspace } from "@/lib/supabase/supabase.types";
-import { SubmitHandler, FieldValues, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { CreateWorkspaceFormSchema } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -183,7 +183,7 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
                 placeholder="Workspace Name"
                 // disabled={isLoading || subscription?.status !== "active"}
                 {...register("logo", {
-                  required: "Workspace name is required",
+                  required: false,
                 })}
               />
               <small className="text-red-600">

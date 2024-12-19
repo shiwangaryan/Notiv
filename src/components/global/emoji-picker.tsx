@@ -8,13 +8,9 @@ interface EmojiPickerProps {
   children: React.ReactNode;
   getValue?: (emoji: string) => void;
 }
-
-export const EmojiPicker: React.FC<EmojiPickerProps> = ({
-  children,
-  getValue,
-}) => {
+const EmojiPicker: React.FC<EmojiPickerProps> = ({ children, getValue }) => {
   const router = useRouter();
-  const Picker = dynamic(() => import("emoji-picker-react"));
+  const Picker = dynamic(() => import("emoji-picker-react"), { ssr: false });
   const onClick = (selectedEmoji: any) => {
     if (getValue) getValue(selectedEmoji.emoji);
   };
@@ -33,3 +29,5 @@ export const EmojiPicker: React.FC<EmojiPickerProps> = ({
     </div>
   );
 };
+
+export default EmojiPicker;
