@@ -30,8 +30,9 @@ const CustomDialogTrigger: React.FC<CustomDialogTriggerProps> = ({
       <DialogContent
         className="h-full
       block
-      sm:h-[440px]
-      overflow-auto
+      overflow-hidden
+      hover:overflow-y-auto
+      sm:h-[460px]
       w-full"
       >
         <DialogHeader>
