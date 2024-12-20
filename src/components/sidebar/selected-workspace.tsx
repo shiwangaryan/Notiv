@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react";
 
 interface SelectedWorkspaceProps {
   workspace: Workspace;
-  onClick?: () => void;
+  onClick?: (option: Workspace) => void;
 }
 
 const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
@@ -31,7 +31,7 @@ const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
     <Link
       href={`/dashboard/${workspace.id}`}
       onClick={() => {
-        if (onClick) onClick();
+        if (onClick) onClick(workspace);
       }}
       className="flex
   rounded-md

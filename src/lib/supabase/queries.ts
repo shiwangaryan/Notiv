@@ -219,7 +219,10 @@ export const getFiles = async (folderId: string) => {
   }
 };
 
-export const addCollaborators = async (users: User[], workspaceId: string) => {
+export const addWorkspaceCollaborators = async (
+  users: User[],
+  workspaceId: string
+) => {
   const response = users.forEach(async (user: User) => {
     const userExists = await db.query.collaborators.findFirst({
       where: (u, { eq }) =>
@@ -230,7 +233,7 @@ export const addCollaborators = async (users: User[], workspaceId: string) => {
   });
 };
 
-export const removeCollaborators = async (
+export const removeWorkspaceCollaborators = async (
   users: User[],
   workspaceId: string
 ) => {

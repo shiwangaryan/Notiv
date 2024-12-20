@@ -279,7 +279,7 @@ const appReducer = (
 };
 
 const AppStateContext = createContext<
-  | {
+   {
       state: AppState;
       dispatch: Dispatch<Action>;
       workspaceId: string | undefined;

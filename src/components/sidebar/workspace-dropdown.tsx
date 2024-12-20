@@ -3,6 +3,8 @@ import { useAppState } from "@/lib/providers/state-provider";
 import { Workspace } from "@/lib/supabase/supabase.types";
 import React, { useEffect, useState } from "react";
 import SelectedWorkspace from "./selected-workspace";
+import CustomDialogTrigger from "../global/custom-dialog";
+import WorkspaceCreator from "../global/workspace-creator";
 
 interface WorkspaceDropdownProps {
   privateWorkspace: Workspace[] | [];
@@ -56,7 +58,8 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
         </span>
       </div>
       {isOpen && (
-        <div className="origin-top-right
+        <div
+          className="origin-top-right
         absolute
         w-full
         rounded-md
@@ -66,9 +69,91 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
         bg-balck/10
         backdrop-blue-lg
         group
-        overflow-scroll
+        overflow-auto
+        overflow-x-hidden
         border-[1px]
-        border-muted"></div>
+        border-muted"
+        >
+          <div className="rounded-md flex flex-col">
+            <div className="!p-2">
+              {!!privateWorkspace.length && (
+                <>
+                  <p className="text-muted-foreground">Private</p>
+                  <hr></hr>
+                  {privateWorkspace.map((option) => {
+                    return (
+                      <SelectedWorkspace
+                        key={option.id}
+                        workspace={option}
+                        onClick={handleSelect}
+                      />
+                    );
+                  })}
+                </>
+              )}
+              {!!sharedWorkspace.length && (
+                <>
+                  <p className="text-muted-foreground">Shared</p>
+                  <hr></hr>
+                  {sharedWorkspace.map((option) => {
+                    return (
+                      <SelectedWorkspace
+                        key={option.id}
+                        workspace={option}
+                        onClick={handleSelect}
+                      />
+                    );
+                  })}
+                </>
+              )}
+              {!!collaboratingWorkspace.length && (
+                <>
+                  <p className="text-muted-foreground">Collaborating</p>
+                  <hr></hr>
+                  {collaboratingWorkspace.map((option) => {
+                    return (
+                      <SelectedWorkspace
+                        key={option.id}
+                        workspace={option}
+                        onClick={handleSelect}
+                      />
+                    );
+                  })}
+                </>
+              )}
+            </div>
+            <CustomDialogTrigger
+              header="Create A Workspace"
+              content={<WorkspaceCreator />}
+              description="Workspaces give you the power to collaborate with others. You can change your workspace privacy settings after creating the workspace too."
+            >
+              <div
+                className="flex
+              transition-all
+              hover:bg-muted
+              justify-center
+              items-center
+              gap-2
+              p-2
+              w-full"
+              >
+                <article
+                  className="text-slate-500
+                rounded-full
+                bg-slate-800
+                w-4
+                h-4
+                flex
+                items-center
+                justify-center"
+                >
+                  +
+                </article>
+                Create Workspace
+              </div>
+            </CustomDialogTrigger>
+          </div>
+        </div>
       )}
     </div>
   );

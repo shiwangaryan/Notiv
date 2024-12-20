@@ -1,4 +1,3 @@
-import AppStateProvider from "@/lib/providers/state-provider";
 import React from "react";
 
 interface LayoutProps {
@@ -13,7 +12,7 @@ const Layout: React.FC<LayoutProps> = ({ children, params }) => {
     overflow-hidden
     h-screen"
     >
-      <AppStateProvider>{children}</AppStateProvider>
+      {children}
     </main>
   );
 };

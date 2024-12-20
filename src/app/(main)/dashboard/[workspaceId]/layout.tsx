@@ -1,5 +1,4 @@
 import Sidebar from "@/components/sidebar/sidebar";
-import AppStateProvider from "@/lib/providers/state-provider";
 import React from "react";
 
 interface LayoutProps {
