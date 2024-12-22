@@ -16,9 +16,7 @@ const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
   onClick,
 }) => {
   const supabase = createClientSupabaseClient();
-  const [workspaceLogo, setWorkspaceLogo] = useState(
-    "/notivlogo.svg"
-  );
+  const [workspaceLogo, setWorkspaceLogo] = useState("/notivlogo.svg");
   useEffect(() => {
     if (workspace.logo) {
       const path = supabase.storage
@@ -33,17 +31,20 @@ const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
       onClick={() => {
         if (onClick) onClick(workspace);
       }}
-      className="flex
-  rounded-md
-  hover:bg-muted
-  transition-all
-  flex-row
-  p-2
-  gap-4
-  justify-cneter
-  items-center
-  cursor-pointer
-  my-2"
+      className="
+      flex
+      px-2
+      rounded-md
+      hover:bg-muted
+      transition-all
+      flex-row
+      p-2
+      gap-4
+      justify-cneter
+      items-center
+      cursor-pointer
+      my-2
+      "
     >
       <Image src={workspaceLogo} alt="workspace-logo" height={26} width={26} />
       <div className="flex flex-col">

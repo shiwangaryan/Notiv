@@ -5,6 +5,8 @@ import React, { useEffect, useState } from "react";
 import SelectedWorkspace from "./selected-workspace";
 import CustomDialogTrigger from "../global/custom-dialog";
 import WorkspaceCreator from "../global/workspace-creator";
+import { Plus } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
 interface WorkspaceDropdownProps {
   privateWorkspace: Workspace[] | [];
@@ -60,19 +62,19 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
       {isOpen && (
         <div
           className="origin-top-right
-        absolute
-        w-full
-        rounded-md
-        shadow-md
-        z-50
-        h-[190px]
-        bg-balck/10
-        backdrop-blue-lg
-        group
-        overflow-auto
-        overflow-x-hidden
-        border-[1px]
-        border-muted"
+          absolute
+          rounded-md
+          shadow-md
+          z-50
+          max-h-[260px]
+          w-[250px]
+          bg-black
+          backdrop-blue-lg
+          group
+          overflow-hidden
+          overflow-y-auto
+          border-[1px]
+          border-muted"
         >
           <div className="rounded-md flex flex-col">
             <div className="!p-2">
@@ -128,26 +130,33 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
               description="Workspaces give you the power to collaborate with others. You can change your workspace privacy settings after creating the workspace too."
             >
               <div
-                className="flex
-              transition-all
-              hover:bg-muted
-              justify-center
-              items-center
-              gap-2
-              p-2
-              w-full"
+                className="flex 
+                transition-all 
+                hover:bg-muted 
+                justify-center 
+                items-center 
+                gap-2 
+                p-2 
+                mb-3
+                mr-2
+                ml-2
+                rounded-md"
               >
                 <article
                   className="text-slate-500
-                rounded-full
-                bg-slate-800
-                w-4
-                h-4
-                flex
-                items-center
-                justify-center"
+                  text-xl
+                  rounded-full
+                  bg-slate-800
+                  w-6
+                  h-6
+                  flex
+                  items-center
+                  justify-center
+                  text-center
+                  leading-none
+                "
                 >
-                  +
+                  <Plus height={16} />
                 </article>
                 Create Workspace
               </div>

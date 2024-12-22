@@ -10,6 +10,10 @@ import { redirect } from "next/navigation";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 import WorkspaceDropdown from "./workspace-dropdown";
+import PlanUsage from "./plan-usage";
+import NativeNavigation from "./native-navigation";
+import { ScrollArea } from "../ui/scroll-area";
+import FoldersDropdownList from "./workspace-folder";
 
 interface SidebarProps {
   params: { workspaceId: string };
@@ -30,11 +34,10 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
   const { data: subscriptionData, error: subscriptionError } =
     await getUserSubscriptionStatus(user.id);
   //check for folders
-  const { data: folderData, error: folderError } = await getFolders(
-    workspaceId
-  );
+  const { data: workspaceFolderData, error: workspaceFolderError } =
+    await getFolders(workspaceId);
   //handle error
-  if (subscriptionError || folderError) redirect("/dashboard");
+  if (subscriptionError || workspaceFolderError) redirect("/dashboard");
   //get all diff workspaces: private, collaborating, shared
   const [privateWorkspace, collaboratingWorkspace, sharedWorkspace] =
     await Promise.all([
@@ -61,6 +64,31 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
             ...collaboratingWorkspace,
           ].find((workspace) => workspace.id === workspaceId)}
         />
+        <PlanUsage
+          foldersLength={workspaceFolderData?.length || 0}
+          subscription={subscriptionData}
+        />
+        <NativeNavigation myWorkspaceId={params.workspaceId} />
+        <ScrollArea
+          className="overflow-scroll
+        relative
+        h-[450px]"
+        >
+          <div
+            className="pointer-events-none
+          w-full
+          absolute
+          bottom-0h-20
+          bg-gradient-to-t
+          from-background
+          to-transparent
+          z-40"
+          />
+          <FoldersDropdownList
+            workspaceFolders={workspaceFolderData}
+            workspaceId={params.workspaceId}
+          />
+        </ScrollArea>
       </div>
     </aside>
   );

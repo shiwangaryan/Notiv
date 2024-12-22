@@ -73,6 +73,35 @@ body {
   }
 }
 
+*::-webkit-scrollbar {
+  scrollbar-gutter: auto;
+  width: 5px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+*::-webkit-scrollbar-corner {
+  display: none;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1); 
+}
+
+@layer utilities {
+  .border-border {
+    border-color: hsl(var(--border));
+  }
+}
+
 .animate-slide {
   animation: 15s slide linear infinite;
 }
