@@ -1,5 +1,14 @@
 import { InferSelectModel } from "drizzle-orm";
-import { customers, files, folders, prices, products, subscriptions, users, workspaces } from "../../../migrations/schema";
+import {
+  customers,
+  files,
+  folders,
+  prices,
+  products,
+  subscriptions,
+  users,
+  workspaces,
+} from "../../../migrations/schema";
 
 export type Json =
   | string
@@ -37,6 +46,42 @@ export type Database = {
   };
   public: {
     Tables: {
+      collaborators: {
+        Row: {
+          created_at: string;
+          id: string;
+          user_id: string;
+          workspace_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          user_id: string;
+          workspace_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          user_id?: string;
+          workspace_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "collaborators_user_id_users_id_fk";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "collaborators_workspace_id_workspaces_id_fk";
+            columns: ["workspace_id"];
+            isOneToOne: false;
+            referencedRelation: "workspaces";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       customers: {
         Row: {
           id: string;
@@ -379,7 +424,7 @@ export type Database = {
           in_trash: string | null;
           logo: string | null;
           title: string;
-          workshpace_owner: string;
+          workspace_owner: string;
         };
         Insert: {
           banner_url?: string | null;
@@ -390,7 +435,7 @@ export type Database = {
           in_trash?: string | null;
           logo?: string | null;
           title: string;
-          workshpace_owner: string;
+          workspace_owner: string;
         };
         Update: {
           banner_url?: string | null;
@@ -401,7 +446,7 @@ export type Database = {
           in_trash?: string | null;
           logo?: string | null;
           title?: string;
-          workshpace_owner?: string;
+          workspace_owner?: string;
         };
         Relationships: [];
       };
@@ -527,14 +572,14 @@ export type CompositeTypes<
   ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
   : never;
 
-export type Workspace = InferSelectModel<typeof workspaces>
+export type Workspace = InferSelectModel<typeof workspaces>;
 export type User = InferSelectModel<typeof users>;
 export type Folder = InferSelectModel<typeof folders>;
 export type File = InferSelectModel<typeof files>;
 export type Customer = InferSelectModel<typeof customers>;
 export type Product = InferSelectModel<typeof products>;
-export type Price = InferSelectModel<typeof prices> & {products?: Product};
+export type Price = InferSelectModel<typeof prices> & { products?: Product };
 export type Subscription = InferSelectModel<typeof subscriptions> & {
-    prices: Price
+  prices: Price;
 };
-export type ProductWithPrices = Product & {prices: Price[]};
+export type ProductWithPrices = Product & { prices: Price[] };

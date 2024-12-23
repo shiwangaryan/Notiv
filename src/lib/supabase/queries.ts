@@ -289,7 +289,7 @@ export const createFolder = async (folder: Folder) => {
     return { data: null, error: null };
   } catch (error) {
     console.log(error);
-    return { data: null, error: "Error" };
+    return { data: null, error: `Error: ${error}` };
   }
 };
 

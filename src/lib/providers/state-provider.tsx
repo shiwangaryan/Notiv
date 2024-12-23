@@ -120,8 +120,8 @@ const appReducer = (
               ...workspace,
               folders: action.payload.folders.sort(
                 (a, b) =>
-                  new Date(a.createdAt ?? "").getTime() -
-                  new Date(b.createdAt ?? "").getTime()
+                  new Date(a.createdAt).getTime() -
+                  new Date(b.createdAt).getTime()
               ),
             };
           }
@@ -136,8 +136,8 @@ const appReducer = (
             ...workspace,
             folders: [...workspace.folders, action.payload.folder].sort(
               (a, b) =>
-                new Date(a.createdAt ?? "").getTime() -
-                new Date(b.createdAt ?? "").getTime()
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime()
             ),
           };
         }),
@@ -209,8 +209,8 @@ const appReducer = (
                     ...folder,
                     files: [...folder.files, action.payload.file].sort(
                       (a, b) =>
-                        new Date(a.createdAt ?? "").getTime() -
-                        new Date(b.createdAt ?? "").getTime()
+                        new Date(a.createdAt).getTime() -
+                        new Date(b.createdAt).getTime()
                     ),
                   };
                 }

@@ -36,6 +36,13 @@
       "when": 1734541687016,
       "tag": "0004_chubby_black_crow",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1734926469972,
+      "tag": "0005_overrated_paladin",
+      "breakpoints": true
     }
   ]
 }
