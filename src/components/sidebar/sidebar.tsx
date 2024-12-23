@@ -78,7 +78,8 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
             className="pointer-events-none
           w-full
           absolute
-          bottom-0h-20
+          bottom-0
+          h-24
           bg-gradient-to-t
           from-background
           to-transparent

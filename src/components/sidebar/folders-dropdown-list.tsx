@@ -109,7 +109,6 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
             group/title
             justify-between
             items-center
-              
             text-Neutrals/neutrals-8"
       >
         <span

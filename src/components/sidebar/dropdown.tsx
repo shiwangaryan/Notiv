@@ -16,6 +16,7 @@ import TooltipComponent from "../global/tool-tip";
 import { PlusIcon, Trash } from "lucide-react";
 import { File } from "@/lib/supabase/supabase.types";
 import { v4 } from "uuid";
+import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 
 interface DropDownProps {
   title: string;
@@ -36,6 +37,7 @@ const DropDown: React.FC<DropDownProps> = ({
   ...props
 }) => {
   const supabase = createClientSupabaseClient();
+  const { user } = useSupabaseUser();
   const { state, dispatch, workspaceId, folderId } = useAppState();
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
@@ -122,42 +124,64 @@ const DropDown: React.FC<DropDownProps> = ({
   };
 
   //onChnages
-   const onChangeEmoji = async (selectedEmoji: string) => {
-     if (!workspaceId) return;
-     if (listType === "folder") {
-       dispatch({
-         type: "UPDATE_FOLDER",
-         payload: {
-           workspaceId,
-           folderId: id,
-           folder: { iconId: selectedEmoji },
-         },
-       });
+  const onChangeEmoji = async (selectedEmoji: string) => {
+    if (!workspaceId) return;
+    const fileAndFolderId = id.split("folder");
+    if (listType === "folder") {
+      dispatch({
+        type: "UPDATE_FOLDER",
+        payload: {
+          workspaceId,
+          folderId: id,
+          folder: { iconId: selectedEmoji },
+        },
+      });
 
-       console.log("reached here");
-       const { data, error } = await updateFolder(
-         { iconId: selectedEmoji },
-         id
-       );
-       console.log("reached again here");
+      const { data, error } = await updateFolder({ iconId: selectedEmoji }, id);
 
-       if (error) {
-         console.log("emoji change error");
-         toast({
-           title: "Error",
-           variant: "destructive",
-           description: "Failed to update emoji",
-         });
-       } else {
-         console.log("emoji changed");
-         toast({
-           title: "Success",
-           variant: "default",
-           description: "Emoji updated successfully",
-         });
-       }
-     }
-   };
+      if (error) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Failed to update emoji",
+        });
+      } else {
+        toast({
+          title: "Success",
+          variant: "default",
+          description: "Emoji updated successfully",
+        });
+      }
+    } else if (listType === "file") {
+      dispatch({
+        type: "UPDATE_FILE",
+        payload: {
+          workspaceId,
+          folderId: fileAndFolderId[0],
+          fileId: fileAndFolderId[1],
+          file: { iconId: selectedEmoji },
+        },
+      });
+      const { data, error } = await updateFile(
+        { iconId: selectedEmoji },
+        fileAndFolderId[1]
+      );
+
+      if (error) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Failed to update emoji",
+        });
+      } else {
+        toast({
+          title: "Success",
+          variant: "default",
+          description: "Emoji updated successfully",
+        });
+      }
+    }
+  };
 
   const folderTitleChange = (e: any) => {
     if (!workspaceId) return;
@@ -229,6 +253,64 @@ const DropDown: React.FC<DropDownProps> = ({
   };
 
   //move to trash method
+  const moveToTrash = async () => {
+    if (!user || !workspaceId) return;
+    const fileAndFolderId = id.split("folder");
+    if (listType === "folder") {
+      const { data, error } = await updateFolder(
+        { inTrash: `Deleted by ${user?.email}` },
+        fileAndFolderId[0]
+      );
+      //update locally
+      dispatch({
+        type: "UPDATE_FOLDER",
+        payload: {
+          folder: { inTrash: `Deleted by ${user?.email}` },
+          folderId: fileAndFolderId[0],
+          workspaceId,
+        },
+      });
+      if (error) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Failed to delete folder",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Folder moved to trash",
+        });
+      }
+    } else if (listType === "file") {
+      const { data, error } = await updateFile(
+        { inTrash: `Deleted by ${user?.email}` },
+        fileAndFolderId[1]
+      );
+      //update locally
+      dispatch({
+        type: "UPDATE_FILE",
+        payload: {
+          file: { inTrash: `Deleted by ${user?.email}` },
+          folderId: fileAndFolderId[0],
+          fileId: fileAndFolderId[1],
+          workspaceId,
+        },
+      });
+      if (error) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Failed to delete file",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "File moved to trash",
+        });
+      }
+    }
+  };
 
   //styling
   const isFolder = listType === "folder";
@@ -313,6 +395,7 @@ const DropDown: React.FC<DropDownProps> = ({
           <div className={hoverStyles}>
             <TooltipComponent message="Delete Folder">
               <Trash
+                onClick={moveToTrash}
                 size={15}
                 className="hover:dark:text-white dark:text-Neutrals/neutrals-7 transition-colors"
               />
