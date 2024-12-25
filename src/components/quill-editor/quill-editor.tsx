@@ -11,6 +11,7 @@ import {
   updateFolder,
 } from "@/lib/supabase/queries";
 import { useToast } from "@/hooks/use-toast";
+import { redirect, usePathname } from "next/navigation";
 
 interface QuillEditorProps {
   dirType: "workspace" | "folder" | "file";
@@ -46,6 +47,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const { state, dispatch, workspaceId, folderId } = useAppState();
   const [quill, setQuill] = useState<any>(null);
   const { toast } = useToast();
+  const pathName = usePathname();
 
   // wrapper for quill editor
   const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
@@ -91,6 +93,40 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       bannerUrl: dirDetails.bannerUrl,
     } as Workspace | Folder | File;
   }, [state, workspaceId, folderId, fileId]);
+
+  //know where you are
+  const breadCrumbs = useMemo(() => {
+    if (!pathName || !workspaceId || !state.workspaces) return;
+
+    //workspace breadcrumb
+    const segments = pathName.split("/").filter((s) => s !== "dashboard" && s);
+    const workspaceDetails = state.workspaces.find((w) => w.id === workspaceId);
+    const workspaceBreadCrumb = workspaceDetails
+      ? `${workspaceDetails.iconId} ${workspaceDetails.title}`
+      : "";
+    if (segments.length === 1) return [workspaceBreadCrumb];
+
+    //folder breadcrumb
+    const folderSegmentId = segments[1];
+    const folderDetails = workspaceDetails?.folders.find(
+      (f) => f.id === folderSegmentId
+    );
+    const folderBreadCrumbs = folderDetails
+      ? `/ ${folderDetails.iconId} ${folderDetails.title}`
+      : "";
+    if (segments.length === 2)
+      return `${workspaceBreadCrumb} ${folderBreadCrumbs}`;
+
+    //file breadcrumb
+    const fileSegmentId = segments[2];
+    const fileDetails = folderDetails?.files.find(
+      (f) => f.id === fileSegmentId
+    );
+    const fileBreadCrumbs = fileDetails
+      ? `/ ${fileDetails.iconId} ${fileDetails.title}`
+      : "";
+    return `${workspaceBreadCrumb} ${folderBreadCrumbs} ${fileBreadCrumbs}`;
+  }, [state, workspaceId, pathName]);
 
   // restore file
   const restoreFileHandler = async () => {
@@ -144,7 +180,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       toast({
         title: "Deleted",
         description: "File has been deleted",
-      }); 
+      });
+      //   router.replace(`/dashboard/${workspaceId}/${folderId}`);
+      redirect(`/dashboard/${workspaceId}/${folderId}`);
     } else if (dirType === "folder") {
       if (!workspaceId) return;
       dispatch({
@@ -158,7 +196,8 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       toast({
         title: "Deleted",
         description: "Folder has been deleted",
-      }); 
+      });
+      redirect(`/dashboard/${workspaceId}`);
     }
   };
 
@@ -171,11 +210,10 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             z-40
             bg-[#EB5757]
             flex
-            md:flex-row
             flex-col
             justify-center
             items-center
-            gap-4
+            gap-2
             flex-wrap
             "
           >
@@ -189,35 +227,51 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
                 "
             >
               <span className="text-white">This {dirType} is in trash.</span>
-              <Button
-                size="sm"
-                variant={"outline"}
-                className="bg-transparent
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant={"outline"}
+                  className="bg-transparent
                 border-white
                 text-white
                 hover:bg-white
-                hover:text-green-400
+                hover:text-green-500
                 "
-                onClick={restoreFileHandler}
-              >
-                Restore
-              </Button>
-              <Button
-                size="sm"
-                variant={"outline"}
-                className="bg-transparent
+                  onClick={restoreFileHandler}
+                >
+                  Restore
+                </Button>
+                <Button
+                  size="sm"
+                  variant={"outline"}
+                  className="bg-transparent
                 border-white
                 text-white
                 hover:bg-white
                 hover:text-[#EB5757]
                 "
-                onClick={deleteFileHandler}
-              >
-                Delete
-              </Button>
+                  onClick={deleteFileHandler}
+                >
+                  Delete
+                </Button>
+              </div>
             </div>
+            <span className="text-sm text-white">{details.inTrash}</span>
           </article>
         )}
+        <div
+          className="flex
+        flex-col-reverse
+        sm:flex-row
+        sm:justify-between
+        justify-center
+        sm:items-center
+        sm:p-2
+        p-8
+        "
+        >
+          {breadCrumbs}
+        </div>
       </div>
       <div
         className="flex

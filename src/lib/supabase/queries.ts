@@ -40,6 +40,11 @@ export const deleteWorkspace = async (workspaceId: string) => {
   if (!workspaceId) return;
   try {
     await db.delete(workspaces).where(eq(workspaces.id, workspaceId));
+    await db
+      .delete(collaborators)
+      .where(eq(collaborators.workspaceId, workspaceId));
+    await db.delete(folders).where(eq(folders.workspaceId, workspaceId));
+    await db.delete(files).where(eq(files.workspaceId, workspaceId));
   } catch (error) {
     console.log(`Error deleting workspace: ${error}`);
   }
@@ -113,7 +118,8 @@ export const deleteFile = async (fileId: string) => {
 
 export const deleteFolder = async (folderId: string) => {
   if (!folderId) return;
-  await db.delete(files).where(eq(files.id, folderId));
+  await db.delete(folders).where(eq(folders.id, folderId));
+  await db.delete(files).where(eq(files.folderId, folderId));
 };
 
 export const getFolderDetails = async (folderId: string) => {
