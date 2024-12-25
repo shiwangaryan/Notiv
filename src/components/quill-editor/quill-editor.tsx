@@ -9,9 +9,23 @@ import {
   deleteFolder,
   updateFile,
   updateFolder,
+  updateWorkspace,
 } from "@/lib/supabase/queries";
 import { useToast } from "@/hooks/use-toast";
 import { redirect, usePathname } from "next/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Badge } from "../ui/badge";
+import Image from "next/image";
+import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabase";
+import EmojiPicker from "../global/emoji-picker";
+import BannerUpload from "../banner-upload/banner-upload";
+import { XCircleIcon } from "lucide-react";
 
 interface QuillEditorProps {
   dirType: "workspace" | "folder" | "file";
@@ -44,8 +58,14 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   fileId,
   dirDetails,
 }) => {
+  const supabase = createClientSupabaseClient();
   const { state, dispatch, workspaceId, folderId } = useAppState();
   const [quill, setQuill] = useState<any>(null);
+  const [collaborators, setCollaborators] = useState<
+    { id: string; email: string; avatarUrl: string }[]
+  >([{ id: "1", email: "something@gmail.com", avatarUrl: "bla-bla" }]);
+  const [saving, setSaving] = useState(false);
+  const [deletingBanner, setDeletingBanner] = useState(false);
   const { toast } = useToast();
   const pathName = usePathname();
 
@@ -201,6 +221,81 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
   };
 
+  // delete banner
+  const deleteBanner = async () => {
+    if (!fileId) return;
+    setDeletingBanner(true);
+    if (dirType === "file") {
+      if (!folderId || !workspaceId) return;
+      dispatch({
+        type: "UPDATE_FILE",
+        payload: { file: { bannerUrl: "" }, fileId, folderId, workspaceId },
+      });
+      await supabase.storage.from("file-banners").remove([`banner-${fileId}`]);
+      await updateFile({ bannerUrl: "" }, fileId);
+    }
+    if (dirType === "folder") {
+      if (!workspaceId) return;
+      dispatch({
+        type: "UPDATE_FOLDER",
+        payload: { folder: { bannerUrl: "" }, folderId: fileId, workspaceId },
+      });
+      await supabase.storage.from("file-banners").remove([`banner-${fileId}`]);
+      await updateFolder({ bannerUrl: "" }, fileId);
+    }
+    if (dirType === "workspace") {
+      dispatch({
+        type: "UPDATE_WORKSPACE",
+        payload: {
+          workspace: { bannerUrl: "" },
+          workspaceId: fileId,
+        },
+      });
+      await supabase.storage.from("file-banners").remove([`banner-${fileId}`]);
+      await updateWorkspace({ bannerUrl: "" }, fileId);
+    }
+    setDeletingBanner(false);
+  };
+
+  //change icon
+  const iconOnChange = async (icon: string) => {
+    setSaving(true);
+    if (!fileId) return;
+    if (dirType === "workspace") {
+      dispatch({
+        type: "UPDATE_WORKSPACE",
+        payload: { workspace: { iconId: icon }, workspaceId: fileId },
+      });
+      await updateWorkspace({ iconId: icon }, fileId);
+    }
+    if (dirType === "folder") {
+      if (!workspaceId) return;
+      dispatch({
+        type: "UPDATE_FOLDER",
+        payload: {
+          folder: { iconId: icon },
+          workspaceId: workspaceId,
+          folderId: fileId,
+        },
+      });
+      await updateFolder({ iconId: icon }, fileId);
+    }
+    if (dirType === "file") {
+      if (!folderId || !workspaceId) return;
+      dispatch({
+        type: "UPDATE_FILE",
+        payload: {
+          file: { iconId: icon },
+          workspaceId: workspaceId,
+          fileId: fileId,
+          folderId: folderId,
+        },
+      });
+      await updateFile({ iconId: icon }, fileId);
+    }
+    setSaving(false);
+  };
+
   return (
     <>
       <div className="relative">
@@ -270,17 +365,162 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         p-8
         "
         >
-          {breadCrumbs}
+          <div>{breadCrumbs}</div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center h-10">
+              {collaborators?.map((collaborator) => (
+                <TooltipProvider key={collaborator.id}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Avatar
+                        className="
+                    -ml-3 
+                    bg-background 
+                    border-2 
+                    flex 
+                    items-center 
+                    justify-center 
+                    border-white 
+                    h-8 
+                    w-8 
+                    rounded-full
+                    "
+                      >
+                        <AvatarImage
+                          src={
+                            collaborator.avatarUrl ? collaborator.avatarUrl : ""
+                          }
+                          className="rounded-full"
+                        />
+                        <AvatarFallback>
+                          {collaborator.email.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </TooltipTrigger>
+                    <TooltipContent>{collaborator.email}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ))}
+            </div>
+            {saving ? (
+              <Badge
+                variant={"secondary"}
+                className="bg-orange-600
+                top-4
+                text-white
+                right-4
+                h-7
+                z-50"
+              >
+                Saving...
+              </Badge>
+            ) : (
+              <Badge
+                variant={"secondary"}
+                className="bg-emerald-600
+                top-4
+                text-white
+                right-4
+                h-7
+                z-50"
+              >
+                Saved
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
+      {details.bannerUrl && (
+        <div className="relative w-full h-[200px]">
+          <Image
+            src={
+              supabase.storage
+                .from("file-banners")
+                .getPublicUrl(details.bannerUrl).data.publicUrl
+            }
+            alt="Banner Image"
+            fill
+            className="w-full
+            md:h-48
+            h-20
+            object-cover"
+          />
+        </div>
+      )}
       <div
         className="flex
-    justify-center
-    items-center
-    flex-col
-    mt-2
-    relative"
+        justify-center
+        items-center
+        flex-col
+        mt-2
+        relative"
       >
+        <div
+          className="w-full
+            self-center
+            max-w-[800px]
+            flex
+            flex-col
+            px-7
+            lg:my-8"
+        >
+          <div className="text-[80px] ">
+            <EmojiPicker getValue={iconOnChange}>
+              <div
+                className="w-[100px]
+                cursor-pointer
+                transition-colors
+                h-[100px]
+                flex
+                items-center
+                justify-center
+                hover:bg-muted
+                rounded-xl"
+              >
+                {details.iconId}
+              </div>
+            </EmojiPicker>
+          </div>
+          <div className="flex">
+            <BannerUpload
+              dirDetails={details}
+              fileId={fileId}
+              dirType={dirType}
+              className="mt-2
+            text-sm
+            text-muted-foreground
+            p-2
+            hover:text-card-foreground
+            transition-all
+            rounded-md
+            ml-[6px]"
+            >
+              {details.bannerUrl ? "Update Banner" : "Add Banner"}
+            </BannerUpload>
+            {details.bannerUrl && (
+              <Button
+                disabled={deletingBanner}
+                onClick={deleteBanner}
+                variant="ghost"
+                className="gap-1 hover:bg-background
+                flex
+                item-center
+                justify-center
+                mt-2
+                text-sm
+                text-muted-foreground
+                w-36
+                p-2
+                rounded-md"
+              >
+                <XCircleIcon size={16} />
+                <span className="whitespace-nowrap font-normal">
+                  Remove Banner
+                </span>
+              </Button>
+            )}
+          </div>
+        </div>
         <div className="max-w-[800px]" id="container" ref={wrapperRef}></div>
       </div>
     </>

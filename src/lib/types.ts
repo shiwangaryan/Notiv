@@ -32,3 +32,12 @@ export const CreateWorkspaceFormSchema = z.object({
     .min(3, "Minimum 3 character workspace name is required"),
   logo: z.any(),
 });
+
+export const UploadBannerFormSchema = z.object({
+  banner: z.custom<FileList>(
+    (value) => value instanceof FileList && value.length > 0,
+    {
+      message: "Banner Image is required",
+    }
+  ),
+});
