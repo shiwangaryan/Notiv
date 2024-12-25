@@ -38,7 +38,11 @@ export const createWorkspace = async (workspace: Workspace) => {
 
 export const deleteWorkspace = async (workspaceId: string) => {
   if (!workspaceId) return;
-  await db.delete(workspaces).where(eq(workspaces.id, workspaceId));
+  try {
+    await db.delete(workspaces).where(eq(workspaces.id, workspaceId));
+  } catch (error) {
+    console.log(`Error deleting workspace: ${error}`);
+  }
 };
 
 export const getFolders = async (workspaceId: string) => {
@@ -67,7 +71,7 @@ export const getWorkspaceDetails = async (workspaceId: string) => {
   if (!isValid)
     return {
       data: [],
-      error: "Error",
+      error: "Error, invalid workspace id",
     };
 
   try {
@@ -97,7 +101,7 @@ export const getFileDetails = async (fileId: string) => {
       .limit(1)) as File[];
     return { data: response, error: null };
   } catch (error) {
-    console.log("🔴Error", error);
+    console.log("🔴Error in get file", error);
     return { data: [], error: "Error" };
   }
 };

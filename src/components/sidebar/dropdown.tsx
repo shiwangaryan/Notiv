@@ -69,7 +69,11 @@ const DropDown: React.FC<DropDownProps> = ({
     if (type === "folder") {
       router.push(`/dashboard/${workspaceId}/${accordianId}`);
     } else {
-      router.push(`/dashboard/${workspaceId}/${folderId}/${accordianId}`);
+      router.push(
+        `/dashboard/${workspaceId}/${folderId}/${
+          accordianId.split("folder")[1]
+        }`
+      );
     }
   };
 

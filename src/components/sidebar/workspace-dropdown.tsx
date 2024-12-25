@@ -44,6 +44,15 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
       });
     }
   }, [privateWorkspace, sharedWorkspace, collaboratingWorkspace]);
+
+  // in real time update the selected workspace name when editing the name in settings
+  useEffect(() => {
+    const findSelectedWorkspace = state.workspaces.find(
+      (workspace) => workspace.id === defaltValue?.id
+    );
+    if (findSelectedWorkspace) setSelectedOption(findSelectedWorkspace);
+  }, [state, defaltValue]);
+
   return (
     <div
       className="relative
