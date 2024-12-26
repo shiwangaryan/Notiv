@@ -63,7 +63,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const [quill, setQuill] = useState<any>(null);
   const [collaborators, setCollaborators] = useState<
     { id: string; email: string; avatarUrl: string }[]
-  >([{ id: "1", email: "something@gmail.com", avatarUrl: "bla-bla" }]);
+  >([]);
   const [saving, setSaving] = useState(false);
   const [deletingBanner, setDeletingBanner] = useState(false);
   const { toast } = useToast();
@@ -433,11 +433,16 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       {details.bannerUrl && (
         <div className="relative w-full h-[200px]">
           <Image
-            src={
+            // src={
+            //   supabase.storage
+            //     .from("file-banners")
+            //     .getPublicUrl(details.bannerUrl).data.publicUrl
+            // }
+            src={`${
               supabase.storage
                 .from("file-banners")
                 .getPublicUrl(details.bannerUrl).data.publicUrl
-            }
+            }?t=${new Date().getTime()}`}
             alt="Banner Image"
             fill
             className="w-full
