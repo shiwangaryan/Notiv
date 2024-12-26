@@ -1,18 +1,21 @@
 "use client";
 import { useAppState } from "@/lib/providers/state-provider";
 import { File, Folder, Workspace } from "@/lib/supabase/supabase.types";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "quill/dist/quill.snow.css";
 import { Button } from "../ui/button";
 import {
   deleteFile,
   deleteFolder,
+  getFileDetails,
+  getFolderDetails,
+  getWorkspaceDetails,
   updateFile,
   updateFolder,
   updateWorkspace,
 } from "@/lib/supabase/queries";
 import { useToast } from "@/hooks/use-toast";
-import { redirect, usePathname } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import {
   Tooltip,
   TooltipContent,
@@ -26,6 +29,7 @@ import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabas
 import EmojiPicker from "../global/emoji-picker";
 import BannerUpload from "../banner-upload/banner-upload";
 import { XCircleIcon } from "lucide-react";
+import { useSocket } from "@/lib/providers/socket-provider";
 
 interface QuillEditorProps {
   dirType: "workspace" | "folder" | "file";
@@ -58,16 +62,19 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   fileId,
   dirDetails,
 }) => {
+  const router = useRouter();
   const supabase = createClientSupabaseClient();
+  const { socket, isConnected } = useSocket();
+  const { toast } = useToast();
+  const pathName = usePathname();
   const { state, dispatch, workspaceId, folderId } = useAppState();
   const [quill, setQuill] = useState<any>(null);
   const [collaborators, setCollaborators] = useState<
     { id: string; email: string; avatarUrl: string }[]
   >([]);
+  const [timestampedBannerUrl, setTimestampedBannerUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [deletingBanner, setDeletingBanner] = useState(false);
-  const { toast } = useToast();
-  const pathName = usePathname();
 
   // wrapper for quill editor
   const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
@@ -296,6 +303,92 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     setSaving(false);
   };
 
+  //getting dynamic image
+  useEffect(() => {
+    if (details.bannerUrl) {
+      const publicUrl = supabase.storage
+        .from("file-banners")
+        .getPublicUrl(details.bannerUrl).data.publicUrl;
+      setTimestampedBannerUrl(`${publicUrl}?t=${new Date().getTime()}`);
+    }
+  }, [state, details.bannerUrl]);
+
+  // on change handler (so tht everything that has changed using
+  // socket can be updated in local changes and also sent
+  // all the events/update to other client )
+  useEffect(() => {
+    if (!fileId) return;
+    let selectedDir;
+    const fetchInformation = async () => {
+      if (dirType === "file") {
+        const { data: selectedDir, error } = await getFileDetails(fileId);
+        if (error || !selectedDir) {
+          return router.replace("/dashboard");
+        }
+
+        if (!folderId || !workspaceId || quill === null) return;
+        if (!selectedDir[0]) {
+          return router.replace(`/dashboard/${workspaceId}`);
+        }
+        if (!selectedDir[0].data) return;
+        quill.setContent(JSON.parse(selectedDir[0].data || ""));
+        dispatch({
+          type: "UPDATE_FILE",
+          payload: {
+            file: { data: selectedDir[0].data },
+            fileId,
+            folderId: selectedDir[0].folderId,
+            workspaceId,
+          },
+        });
+      }
+      if (dirType === "folder") {
+        const { data: selectedDir, error } = await getFolderDetails(fileId);
+        if (error || !selectedDir) {
+          return router.replace("/dashboard");
+        }
+
+        if (!workspaceId || quill === null) return;
+        if (!selectedDir[0]) {
+          return router.replace(`/dashboard/${workspaceId}`);
+        }
+        if (!selectedDir[0].data) return;
+        quill.setContent(JSON.parse(selectedDir[0].data || ""));
+        dispatch({
+          type: "UPDATE_FOLDER",
+          payload: {
+            folder: { data: selectedDir[0].data },
+            folderId: fileId,
+            workspaceId,
+          },
+        });
+      }
+      if (dirType === "workspace") {
+        const { data: selectedDir, error } = await getWorkspaceDetails(fileId);
+        if (error || !selectedDir) {
+          return router.replace("/dashboard");
+        }
+
+        if (quill === null || !selectedDir[0] || !selectedDir[0].data) return;
+        quill.setContent(JSON.parse(selectedDir[0].data || ""));
+        dispatch({
+          type: "UPDATE_WORKSPACE",
+          payload: {
+            workspace: { data: selectedDir[0].data },
+            workspaceId: fileId,
+          },
+        });
+      }
+    };
+    fetchInformation();
+  }, [fileId, workspaceId, folderId, dirType]);
+
+  // socket events
+  useEffect(() => {
+    if (socket === null || quill === null || !fileId) return;
+    socket.emit("create-room", fileId);
+  }, [socket, quill, fileId]);
+
   return (
     <>
       <div className="relative">
@@ -430,19 +523,20 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           </div>
         </div>
       </div>
-      {details.bannerUrl && (
-        <div className="relative w-full h-[200px]">
+      {details.bannerUrl && timestampedBannerUrl !== "" && (
+        <div className="relative w-full h-[230px]">
           <Image
             // src={
             //   supabase.storage
             //     .from("file-banners")
             //     .getPublicUrl(details.bannerUrl).data.publicUrl
             // }
-            src={`${
-              supabase.storage
-                .from("file-banners")
-                .getPublicUrl(details.bannerUrl).data.publicUrl
-            }?t=${new Date().getTime()}`}
+            // src={`${
+            //   supabase.storage
+            //     .from("file-banners")
+            //     .getPublicUrl(details.bannerUrl).data.publicUrl
+            // }?t=${new Date().getTime()}`}
+            src={timestampedBannerUrl}
             alt="Banner Image"
             fill
             className="w-full
@@ -498,7 +592,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             hover:text-card-foreground
             transition-all
             rounded-md
-            ml-[6px]"
+            "
             >
               {details.bannerUrl ? "Update Banner" : "Add Banner"}
             </BannerUpload>
@@ -525,6 +619,20 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
               </Button>
             )}
           </div>
+          <span
+            className="text-muted-foreground
+          text-3xl
+          font-bold
+          h-9"
+          >
+            {details.title}
+          </span>
+          <span
+            className="text-muted-foreground text-sm
+          "
+          >
+            {dirType.toUpperCase()}
+          </span>
         </div>
         <div className="max-w-[800px]" id="container" ref={wrapperRef}></div>
       </div>

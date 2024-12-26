@@ -43,6 +43,13 @@
       "when": 1734926469972,
       "tag": "0005_overrated_paladin",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1735232466598,
+      "tag": "0006_nice_scorpion",
+      "breakpoints": true
     }
   ]
 }
