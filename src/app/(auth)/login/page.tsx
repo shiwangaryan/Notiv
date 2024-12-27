@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,12 +44,17 @@ const LoginPage = () => {
     }
     router.replace("/dashboard");
   };
+
+  useEffect(() => {
+    if (submitError) {
+      setSubmiteError(""); // Reset submitError on any form change
+    }
+  }, [form.watch()]);
   return (
     <Form {...form}>
       <form
-        onChange={() => {
-          if (submitError) setSubmiteError("");
-        }}
+        //removed onchanged from here and used it in useEffect instead (form.watch())
+        //as it was hindering with state rendering
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full
     sm:justify-center

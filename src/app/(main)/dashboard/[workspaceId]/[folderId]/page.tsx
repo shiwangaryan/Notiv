@@ -12,7 +12,7 @@ const FolderPage = async ({ params }: { params: { folderId: string } }) => {
 
   return (
     <div className="relative">
-      <QuillEditor dirType="folder" fileId={folderId} dirDetails={data[0]} />
+      <QuillEditor dirType="folder" fileId={folderId} dirDetails={data[0] || {}} />
     </div>
   );
 };

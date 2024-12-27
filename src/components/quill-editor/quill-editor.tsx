@@ -1,7 +1,13 @@
 "use client";
 import { useAppState } from "@/lib/providers/state-provider";
 import { File, Folder, Workspace } from "@/lib/supabase/supabase.types";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import "quill/dist/quill.snow.css";
 import { Button } from "../ui/button";
 import {
@@ -30,6 +36,7 @@ import EmojiPicker from "../global/emoji-picker";
 import BannerUpload from "../banner-upload/banner-upload";
 import { XCircleIcon } from "lucide-react";
 import { useSocket } from "@/lib/providers/socket-provider";
+import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 
 interface QuillEditorProps {
   dirType: "workspace" | "folder" | "file";
@@ -64,9 +71,11 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 }) => {
   const router = useRouter();
   const supabase = createClientSupabaseClient();
-  const { socket, isConnected } = useSocket();
-  const { toast } = useToast();
   const pathName = usePathname();
+  const saveTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { user } = useSupabaseUser();
+  const { socket } = useSocket();
+  const { toast } = useToast();
   const { state, dispatch, workspaceId, folderId } = useAppState();
   const [quill, setQuill] = useState<any>(null);
   const [collaborators, setCollaborators] = useState<
@@ -78,7 +87,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
 
   // wrapper for quill editor
   const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
-    if (typeof wrapper === "undefined" || wrapper === null) return;
+    if (typeof window === "undefined" || wrapper === null) return;
     wrapper.innerHTML = "";
     const editor = document.createElement("div");
     wrapper.append(editor);
@@ -94,6 +103,24 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       setQuill(q);
     });
   }, []);
+  // const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
+  //   if (typeof window !== "undefined") {
+  //     if (wrapper === null) return;
+  //     wrapper.innerHTML = "";
+  //     const editor = document.createElement("div");
+  //     wrapper.append(editor);
+  //     (async () => {
+  //       const Quill = (await import("quill")).default;
+  //       const q = new Quill(editor, {
+  //         theme: "snow",
+  //         modules: {
+  //           toolbar: TOOLBAR_OPTIONS,
+  //         },
+  //       });
+  //       setQuill(q);
+  //     })();
+  //   }
+  // }, []);
 
   const details = useMemo(() => {
     let selectedDir;
@@ -326,12 +353,13 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           return router.replace("/dashboard");
         }
 
-        if (!folderId || !workspaceId || quill === null) return;
         if (!selectedDir[0]) {
+          if (!workspaceId) return;
           return router.replace(`/dashboard/${workspaceId}`);
         }
+        if (!workspaceId || quill === null) return;
         if (!selectedDir[0].data) return;
-        quill.setContent(JSON.parse(selectedDir[0].data || ""));
+        quill.setContents(JSON.parse(selectedDir[0].data || ""));
         dispatch({
           type: "UPDATE_FILE",
           payload: {
@@ -348,18 +376,18 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
           return router.replace("/dashboard");
         }
 
-        if (!workspaceId || quill === null) return;
         if (!selectedDir[0]) {
-          return router.replace(`/dashboard/${workspaceId}`);
+          router.replace(`/dashboard/${workspaceId}`);
         }
+        if (quill === null) return;
         if (!selectedDir[0].data) return;
-        quill.setContent(JSON.parse(selectedDir[0].data || ""));
+        quill.setContents(JSON.parse(selectedDir[0].data || ""));
         dispatch({
           type: "UPDATE_FOLDER",
           payload: {
-            folder: { data: selectedDir[0].data },
             folderId: fileId,
-            workspaceId,
+            folder: { data: selectedDir[0].data },
+            workspaceId: selectedDir[0].workspaceId,
           },
         });
       }
@@ -368,9 +396,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         if (error || !selectedDir) {
           return router.replace("/dashboard");
         }
-
-        if (quill === null || !selectedDir[0] || !selectedDir[0].data) return;
-        quill.setContent(JSON.parse(selectedDir[0].data || ""));
+        if (!selectedDir[0] || quill === null) return;
+        if (!selectedDir[0].data) return;
+        quill.setContents(JSON.parse(selectedDir[0].data || ""));
         dispatch({
           type: "UPDATE_WORKSPACE",
           payload: {
@@ -381,13 +409,84 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       }
     };
     fetchInformation();
-  }, [fileId, workspaceId, folderId, dirType]);
+  }, [fileId, workspaceId, quill, dirType]);
 
-  // socket events
+  //rooms
   useEffect(() => {
     if (socket === null || quill === null || !fileId) return;
     socket.emit("create-room", fileId);
   }, [socket, quill, fileId]);
+
+  useEffect(() => {
+    if (quill === null || socket === null || !fileId || !user) return;
+    const quillHandler = (delta: any, oldDelta: any, source: any) => {
+      if (source !== "user") return;
+      if (saveTimeRef.current) clearTimeout(saveTimeRef.current);
+      setSaving(true);
+      const contents = quill.getContents();
+      const quillLength = quill.getLength();
+      saveTimeRef.current = setTimeout(async () => {
+        if (contents && quillLength !== 1 && fileId) {
+          if (dirType == "workspace") {
+            dispatch({
+              type: "UPDATE_WORKSPACE",
+              payload: {
+                workspace: { data: JSON.stringify(contents) },
+                workspaceId: fileId,
+              },
+            });
+            await updateWorkspace({ data: JSON.stringify(contents) }, fileId);
+          }
+          if (dirType == "folder") {
+            if (!workspaceId) return;
+            dispatch({
+              type: "UPDATE_FOLDER",
+              payload: {
+                folder: { data: JSON.stringify(contents) },
+                workspaceId,
+                folderId: fileId,
+              },
+            });
+            await updateFolder({ data: JSON.stringify(contents) }, fileId);
+          }
+          if (dirType == "file") {
+            if (!workspaceId || !folderId) return;
+            dispatch({
+              type: "UPDATE_FILE",
+              payload: {
+                file: { data: JSON.stringify(contents) },
+                workspaceId,
+                folderId: folderId,
+                fileId,
+              },
+            });
+            await updateFile({ data: JSON.stringify(contents) }, fileId);
+          }
+        }
+        setSaving(false);
+      }, 850);
+      socket.emit("send-changes", delta, fileId);
+    };
+    quill.on("text-change", quillHandler);
+
+    return () => {
+      quill.off("text-change", quillHandler);
+      if (saveTimeRef.current) clearTimeout(saveTimeRef.current);
+    };
+  }, [quill, socket, fileId, user, details, folderId, workspaceId, dispatch]);
+
+  useEffect(() => {
+    if (quill === null || socket === null) return;
+    const socketHandler = (deltas: any, id: string) => {
+      if (id === fileId) {
+        quill.updateContents(deltas);
+      }
+    };
+    socket.on("receive-changes", socketHandler);
+    return () => {
+      socket.off("receive-changes", socketHandler);
+    };
+  }, [quill, socket, fileId]);
 
   return (
     <>
@@ -634,7 +733,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             {dirType.toUpperCase()}
           </span>
         </div>
-        <div className="max-w-[800px]" id="container" ref={wrapperRef}></div>
+        <div id="container" className="max-w-[800px]" ref={wrapperRef}></div>
       </div>
     </>
   );

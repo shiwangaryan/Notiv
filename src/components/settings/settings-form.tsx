@@ -6,6 +6,7 @@ import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabas
 import {
   addWorkspaceCollaborators,
   deleteWorkspace,
+  getCollaborators,
   removeWorkspaceCollaborators,
   updateWorkspace,
 } from "@/lib/supabase/queries";
@@ -25,13 +26,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import CollaboratorsSearch from "../global/collaborators-search";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Alert, AlertDescription } from "../ui/alert";
-import db from "@/lib/supabase/db";
-import { workspaces } from "../../../migrations/schema";
 import { twMerge } from "tailwind-merge";
 
 const SettingsForm = () => {
@@ -61,13 +71,13 @@ const SettingsForm = () => {
   };
 
   //addCollaborators
-  const addCollaborators = async (user: User) => {
+  const addCollaborator = async (profile: User) => {
     if (!workspaceId) return;
     //WIP Subscription
 
-    await addWorkspaceCollaborators(collaborators, workspaceId);
-    setCollaborators([...collaborators, user]);
-    router.refresh();
+    await addWorkspaceCollaborators([profile], workspaceId);
+    setCollaborators([...collaborators, profile]);
+    // router.refresh();
   };
 
   //remove collaborators
@@ -137,14 +147,41 @@ const SettingsForm = () => {
   };
 
   //on clicks
+  const onClickAlertConfirm = async () => {
+    if (!workspaceId) return;
+    if (collaborators.length > 0) {
+      await removeWorkspaceCollaborators(collaborators, workspaceId);
+    }
+    setPermission("private");
+    setOpenAlertMessage(false);
+  };
+  const onPermissionChange = (val: string) => {
+    if (val === "private") {
+      setOpenAlertMessage(true);
+    } else {
+      setPermission(val);
+    }
+  };
   //fetching avatar details
   //get workspace detials
   useEffect(() => {
     const currentWorkspace = state.workspaces.find((w) => w.id === workspaceId);
-    setWorkspaceDetails(currentWorkspace);
+    if (currentWorkspace) setWorkspaceDetails(currentWorkspace);
   }, [state, workspaceId]);
   //get all the collaborators
   //WIP Payment portal redirect
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    const fetchCollaborators = async () => {
+      const collaborators = await getCollaborators(workspaceId);
+      if (collaborators.length) {
+        setPermission("shared");
+        setCollaborators(collaborators);
+      }
+    };
+    fetchCollaborators();
+  }, [workspaceId]);
 
   return (
     <div className="flex gap-4 flex-col">
@@ -179,10 +216,7 @@ const SettingsForm = () => {
       <>
         <div className="flex flex-col gap-2">
           <Label htmlFor="permissions">Permissions</Label>
-          <Select
-            onValueChange={(val) => setPermission(val)}
-            defaultValue={permission}
-          >
+          <Select onValueChange={onPermissionChange} value={permission}>
             <SelectTrigger className="w-full h-25">
               <SelectValue />
             </SelectTrigger>
@@ -230,7 +264,7 @@ const SettingsForm = () => {
           <div>
             <CollaboratorsSearch
               existingCollaborators={collaborators}
-              getCollaborator={(user) => addCollaborators(user)}
+              getCollaborator={(user) => addCollaborator(user)}
             >
               <Button type="button" className="text-sm mt-4">
                 <Plus />
@@ -330,6 +364,25 @@ const SettingsForm = () => {
           </Button>
         </Alert>
       </>
+      <AlertDialog open={openAlertMessage}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Changing a Shared workspace to a Private workspace will remove all
+              the collaborators.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpenAlertMessage(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={onClickAlertConfirm}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

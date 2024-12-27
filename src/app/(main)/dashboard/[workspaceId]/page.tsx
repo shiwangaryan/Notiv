@@ -19,7 +19,7 @@ const WorkspacePage = async ({
       <QuillEditor
         dirType="workspace"
         fileId={workspaceId}
-        dirDetails={data[0]}
+        dirDetails={data[0] || {}}
       />
     </div>
   );
