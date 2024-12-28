@@ -1,3 +1,4 @@
+import MobileSidebar from "@/components/sidebar/mobile-sidebar";
 import Sidebar from "@/components/sidebar/sidebar";
 import React from "react";
 
@@ -6,12 +7,10 @@ interface LayoutProps {
   params: any;
 }
 
-const Layout: React.FC<LayoutProps> = async props => {
+const Layout: React.FC<LayoutProps> = async (props) => {
   const params = await props.params;
 
-  const {
-    children
-  } = props;
+  const { children } = props;
 
   return (
     <main
@@ -20,6 +19,9 @@ const Layout: React.FC<LayoutProps> = async props => {
   w-screen"
     >
       <Sidebar params={params} />
+      <MobileSidebar>
+        <Sidebar params={params} className="w-screen inline-block sm:hidden" />
+      </MobileSidebar>
 
       <div
         className="dark:border-Neutrals-12/70
@@ -27,7 +29,7 @@ const Layout: React.FC<LayoutProps> = async props => {
     w-full
     relative
     "
-    // overflow-scroll
+        // overflow-scroll
       >
         {children}
       </div>

@@ -15,6 +15,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import DropDown from "./dropdown";
+import useSupabaseRealtime from "@/lib/hooks/use-supabase-realtime";
 
 interface FoldersDropdownListProps {
   workspaceFolders: Folder[];
@@ -25,13 +26,13 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
   workspaceFolders,
   workspaceId,
 }) => {
+  //set real time updates (when another use add folder)
+  useSupabaseRealtime();
   const { subscription } = useSupabaseUser();
   const { toast } = useToast();
   //local state folders
   const { state, dispatch, folderId } = useAppState();
   const [folders, setFolders] = useState(workspaceFolders);
-
-  //set real time updates (when another use add folder)
 
   //effect set initial state server app state
   useEffect(() => {
