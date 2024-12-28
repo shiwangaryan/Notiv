@@ -382,3 +382,12 @@ export const getUsersFromSearch = async (email: string) => {
     .where(ilike(users.email, `${email}%`));
   return accounts;
 };
+
+export const changeProfilePicture = async (user: any) => {
+  await db
+    .update(users)
+    .set({ avatarUrl: `avatar.${user.id}` })
+    .where(eq(users.id, user.id));
+
+  return;
+};

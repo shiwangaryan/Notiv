@@ -34,9 +34,9 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ children }) => {
             items-center
             p-4"
         >
-          {nativeNavigation.map((item) => (
+          {nativeNavigation.map((item, index) => (
             <li
-              key={item.id}
+              key={index}
               className="flex
                     items-center
                     justify-center
@@ -50,7 +50,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ children }) => {
                 className={clsx("", {
                   "text-muted-foreground": selectedNav !== item.id,
                 })}
-              > 
+              >
                 {item.title}
               </small>
             </li>

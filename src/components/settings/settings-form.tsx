@@ -5,13 +5,22 @@ import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabase";
 import {
   addWorkspaceCollaborators,
+  changeProfilePicture,
   deleteWorkspace,
+  findUser,
   getCollaborators,
   removeWorkspaceCollaborators,
   updateWorkspace,
 } from "@/lib/supabase/queries";
 import { User, Workspace } from "@/lib/supabase/supabase.types";
-import { Briefcase, Lock, Plus, Share } from "lucide-react";
+import {
+  Briefcase,
+  Loader,
+  Lock,
+  Plus,
+  Share,
+  User as UserIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { Separator } from "../ui/separator";
@@ -43,6 +52,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Alert, AlertDescription } from "../ui/alert";
 import { twMerge } from "tailwind-merge";
+import CypressProfileIcon from "../icons/cypressProfileIcon";
 
 const SettingsForm = () => {
   const { toast } = useToast();
@@ -56,6 +66,7 @@ const SettingsForm = () => {
   const [workspaceDetails, setWorkspaceDetails] = useState<Workspace>();
   const titleTimeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [uploadingProfilePic, setUploadingProfilePic] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [uploadingLogo, setUploadingLogo] = useState(false);
   // WIP PAYMENT PORTAL
 
@@ -162,7 +173,42 @@ const SettingsForm = () => {
       setPermission(val);
     }
   };
+
+  const onChangeProfilePicture = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!user) return;
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const response = await findUser(user.id);
+    if (!response) return;
+
+    setUploadingProfilePic(true);
+    if (response.avatarUrl)
+      await supabase.storage.from("avatars").remove([response.avatarUrl]);
+    await supabase.storage.from("avatars").upload(`avatar.${user.id}`, file);
+
+    await changeProfilePicture(user);
+    const avatarUrl = supabase.storage
+      .from("avatars")
+      .getPublicUrl(`avatar.${user.id}`).data.publicUrl;
+    const timeStampedUrl = `${avatarUrl}?${new Date().getTime()}`;
+    setAvatarUrl(timeStampedUrl);
+    setUploadingProfilePic(false);
+  };
   //fetching avatar details
+  const getAvatar = async () => {
+    if (!user) return;
+    const response = await findUser(user.id);
+    if (!response) return "";
+    const avatarUrl = response.avatarUrl
+      ? supabase.storage.from("avatars").getPublicUrl(response.avatarUrl).data
+          .publicUrl
+      : "";
+    const timeStampedUrl = `${avatarUrl}?${new Date().getTime()}`;
+    setAvatarUrl(timeStampedUrl);
+    return;
+  };
   //get workspace detials
   useEffect(() => {
     const currentWorkspace = state.workspaces.find((w) => w.id === workspaceId);
@@ -183,6 +229,9 @@ const SettingsForm = () => {
     fetchCollaborators();
   }, [workspaceId]);
 
+  useEffect(() => {
+    getAvatar();
+  }, [user]);
   return (
     <div className="flex gap-4 flex-col">
       <p className="flex items-center gap-2 mt-6">
@@ -363,6 +412,33 @@ const SettingsForm = () => {
             Delete Workspace
           </Button>
         </Alert>
+        <p className="flex items-center">
+          <Avatar className="flex items-center justify-center">
+            {uploadingProfilePic ? <Loader /> : <AvatarImage src={avatarUrl} />}
+            <AvatarFallback>
+              <CypressProfileIcon />
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col ml-6 mb-1">
+            <small className="text-muted-foreground cursor-not-allowed">
+              {user ? user.email : ""}
+            </small>
+            <Label
+              htmlFor="profilePicture"
+              className="text-sm text-muted-foreground"
+            >
+              Profile Picture
+            </Label>
+            <Input
+              name="profilePicture"
+              type="file"
+              accept="image/*"
+              placeholder="Profile Picture"
+              onChange={onChangeProfilePicture}
+              disabled={uploadingProfilePic}
+            />
+          </div>
+        </p>
       </>
       <AlertDialog open={openAlertMessage}>
         <AlertDialogContent>
