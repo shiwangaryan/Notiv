@@ -93,7 +93,7 @@ body {
 }
 
 *:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.1); 
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 @layer utilities {
@@ -168,5 +168,5 @@ body {
 .ql-editor > p,
 ol,
 ul {
-  @apply dark:text-washed-purple-700;
+  @apply dark:text-white;
 }

@@ -234,10 +234,15 @@ const SettingsForm = () => {
   }, [user]);
   return (
     <div className="flex gap-4 flex-col">
-      <p className="flex items-center gap-2 mt-6">
-        <Briefcase size={20} />
-        Workspace
-      </p>
+      <div className="flex flex-col ">
+        <p className="flex items-center gap-2 mt-6">
+          <Briefcase size={20} />
+          Workspace
+        </p>
+        <small className="text-white/35 cursor-not-allowed">
+          {user ? user.email : ""}
+        </small>
+      </div>
       <Separator />
       <div className="flex flex-col gap-1">
         <Label htmlFor="workspaceName">Name</Label>
@@ -419,14 +424,11 @@ const SettingsForm = () => {
               <CypressProfileIcon />
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col ml-6 mb-1">
-            <small className="text-muted-foreground cursor-not-allowed">
+          <div className="flex flex-col ml-6 gap-1">
+            {/* <small className="text-muted-foreground cursor-not-allowed mb-1">
               {user ? user.email : ""}
-            </small>
-            <Label
-              htmlFor="profilePicture"
-              className="text-sm text-muted-foreground"
-            >
+            </small> */}
+            <Label htmlFor="profilePicture" className="text-sm text-white/90">
               Profile Picture
             </Label>
             <Input
@@ -436,6 +438,7 @@ const SettingsForm = () => {
               placeholder="Profile Picture"
               onChange={onChangeProfilePicture}
               disabled={uploadingProfilePic}
+              className="text-muted-foreground"
             />
           </div>
         </p>
