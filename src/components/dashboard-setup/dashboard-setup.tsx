@@ -180,7 +180,7 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
                 type="file"
                 accept="image/*"
                 placeholder="Workspace Name"
-                // disabled={isLoading || subscription?.status !== "active"}
+                disabled={isLoading || subscription?.status !== "active"}
                 {...register("logo", {
                   required: false,
                 })}

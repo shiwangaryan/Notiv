@@ -447,36 +447,42 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             dispatch({
               type: "UPDATE_WORKSPACE",
               payload: {
-                workspace: { data: JSON.stringify(contents) },
+                workspace: { data: JSON.stringify(contents) || "" },
                 workspaceId: fileId,
               },
             });
-            await updateWorkspace({ data: JSON.stringify(contents) }, fileId);
+            await updateWorkspace(
+              { data: JSON.stringify(contents) || "" },
+              fileId
+            );
           }
           if (dirType == "folder") {
             if (!workspaceId) return;
             dispatch({
               type: "UPDATE_FOLDER",
               payload: {
-                folder: { data: JSON.stringify(contents) },
+                folder: { data: JSON.stringify(contents) || "" },
                 workspaceId,
                 folderId: fileId,
               },
             });
-            await updateFolder({ data: JSON.stringify(contents) }, fileId);
+            await updateFolder(
+              { data: JSON.stringify(contents) || "" },
+              fileId
+            );
           }
           if (dirType == "file") {
             if (!workspaceId || !folderId) return;
             dispatch({
               type: "UPDATE_FILE",
               payload: {
-                file: { data: JSON.stringify(contents) },
+                file: { data: JSON.stringify(contents) || "" },
                 workspaceId,
                 folderId: folderId,
                 fileId,
               },
             });
-            await updateFile({ data: JSON.stringify(contents) }, fileId);
+            await updateFile({ data: JSON.stringify(contents) || "" }, fileId);
           }
         }
         setSaving(false);
@@ -662,8 +668,14 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
                     "
                       >
                         <AvatarImage
+                          // src={
+                          //   collaborator.avatarUrl ? collaborator.avatarUrl : ""
+                          // }
                           src={
-                            collaborator.avatarUrl ? collaborator.avatarUrl : ""
+                            supabase.storage
+                              .from("avatars")
+                              .getPublicUrl(`avatar.${collaborator.id}`).data
+                              .publicUrl
                           }
                           className="rounded-full"
                         />

@@ -15,8 +15,11 @@ import {
 import { User, Workspace } from "@/lib/supabase/supabase.types";
 import {
   Briefcase,
+  CreditCard,
+  ExternalLink,
   Loader,
   Lock,
+  LogOut,
   Plus,
   Share,
   User as UserIcon,
@@ -53,11 +56,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Alert, AlertDescription } from "../ui/alert";
 import { twMerge } from "tailwind-merge";
 import CypressProfileIcon from "../icons/cypressProfileIcon";
+import LogoutButton from "../global/logout-button";
+import Link from "next/link";
+import { useSubscriptionModal } from "@/lib/server-action/subscription-modal-provider";
 
 const SettingsForm = () => {
   const { toast } = useToast();
-  const { user } = useSupabaseUser();
   const router = useRouter();
+  const { setOpen } = useSubscriptionModal();
+  const { user, subscription } = useSupabaseUser();
   const supabase = createClientSupabaseClient();
   const { state, workspaceId, dispatch } = useAppState();
   const [permission, setPermission] = useState("private");
@@ -263,9 +270,13 @@ const SettingsForm = () => {
           placeholder="Workspace Logo"
           onChange={workspaceLogoChange}
           // WIP SUBS STATUS
-          disabled={uploadingLogo}
+          disabled={uploadingLogo || subscription?.status !== "active"}
         />
-        {/* WIP SUBSCRIPTIONS */}
+        {subscription?.status !== "active" && (
+          <small className="text-muted-foreground">
+            To customize your workspace logo, please upgrade to a Pro plan.
+          </small>
+        )}
       </div>
       <>
         <div className="flex flex-col gap-2">
@@ -417,9 +428,13 @@ const SettingsForm = () => {
             Delete Workspace
           </Button>
         </Alert>
-        <p className="flex items-center">
+        <div className="flex items-center">
           <Avatar className="flex items-center justify-center">
-            {uploadingProfilePic ? <Loader /> : <AvatarImage src={avatarUrl} />}
+            {uploadingProfilePic ? (
+              <Loader className="text-muted-foreground" />
+            ) : (
+              <AvatarImage src={avatarUrl} />
+            )}
             <AvatarFallback>
               <CypressProfileIcon />
             </AvatarFallback>
@@ -441,7 +456,51 @@ const SettingsForm = () => {
               className="text-muted-foreground"
             />
           </div>
+        </div>
+        <LogoutButton>
+          <div className="flex items-center">
+            <LogOut />
+          </div>
+        </LogoutButton>
+        <p className="flex items-center gap-2 mt-6">
+          <CreditCard size={20} /> Billing & Plan
         </p>
+        <Separator />
+        <p className="text-muted-foreground">
+          You are currently on a{" "}
+          {subscription?.status === "active" ? "Pro" : "Free"} Plan
+        </p>
+        <Link
+          href="/"
+          target="_blank"
+          className="text-muted-foreground flex flex-row items-center gap-2"
+        >
+          View Plan <ExternalLink size={16} />
+        </Link>
+        {subscription?.status === "active" ? (
+          <div>
+            <Button
+              type="button"
+              size="sm"
+              variant={"secondary"}
+              className="text-sm"
+            >
+              Manage Subscription
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <Button
+              type="button"
+              size="sm"
+              variant={"secondary"}
+              className="text-sm"
+              onClick={() => setOpen(true)}
+            >
+              Start Plan
+            </Button>
+          </div>
+        )}
       </>
       <AlertDialog open={openAlertMessage}>
         <AlertDialogContent>

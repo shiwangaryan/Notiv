@@ -1,3 +1,4 @@
+import { SubscriptionModalProvider } from "@/lib/server-action/subscription-modal-provider";
 import React from "react";
 
 interface LayoutProps {
@@ -12,7 +13,7 @@ const Layout: React.FC<LayoutProps> = ({ children, params }) => {
     overflow-hidden
     h-screen"
     >
-      {children}
+      <SubscriptionModalProvider>{children}</SubscriptionModalProvider>
     </main>
   );
 };
