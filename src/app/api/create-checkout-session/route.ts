@@ -1,15 +1,13 @@
 import { stripe } from "@/lib/stripe";
 import { createOrRetrieveCustomer } from "@/lib/stripe/adminTasks";
+import { createServerSupabaseClient } from "@/lib/supabase/create-client";
 import { getURL } from "@/lib/utils";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const { price, quantity = 1, metadata = {} } = await request.json();
   try {
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = await createServerSupabaseClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -32,8 +30,8 @@ export async function POST(request: Request) {
       mode: "subscription",
       allow_promotion_codes: true,
       subscription_data: { trial_from_plan: true, metadata },
-      success_url: `${getURL()}/dashboard`,
-      cancel_url: `${getURL()}/dashboard`,
+      success_url: `${getURL()}dashboard`,
+      cancel_url: `${getURL()}dashboard`,
     });
     return NextResponse.json({ sessionId: session.id });
   } catch (error: any) {

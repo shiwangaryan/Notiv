@@ -668,15 +668,12 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
                     "
                       >
                         <AvatarImage
-                          // src={
-                          //   collaborator.avatarUrl ? collaborator.avatarUrl : ""
-                          // }
-                          src={
+                          src={`${
                             supabase.storage
                               .from("avatars")
                               .getPublicUrl(`avatar.${collaborator.id}`).data
                               .publicUrl
-                          }
+                          }`}
                           className="rounded-full"
                         />
                         <AvatarFallback>

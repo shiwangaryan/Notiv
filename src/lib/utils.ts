@@ -26,7 +26,7 @@ export const getURL = () => {
     process?.env?.NEXT_PUBLIC_SITE_URL ??
     process?.env?.NEXT_PUBLIC_PLANETSCALE_URL ??
     "http://localhost:3000";
-  url = url.includes("https") ? url : `https://${url}`;
+  // url = url.includes("https") ? url : `http://${url}`;
   url = url.charAt(url.length - 1) === "/" ? url : `${url}/`;
   return url;
 };

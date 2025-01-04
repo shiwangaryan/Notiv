@@ -1,13 +1,19 @@
-import db from "@/lib/supabase/db";
-import { Product, Subscription } from "@/lib/supabase/supabase.types";
 import Stripe from "stripe";
-import { customers, prices, products, users } from "../../../migrations/schema";
+import { Price, Product, Subscription } from "../supabase/supabase.types";
+import db from "../supabase/db";
+import {
+  customers,
+  prices,
+  products,
+  subscriptions,
+  users,
+} from "../../../migrations/schema";
 import { stripe } from "./index";
 import { eq } from "drizzle-orm";
-import { subscriptions } from "@/lib/supabase/schema";
-import { toDateTime } from "@/lib/utils";
+import { toDateTime } from "../utils";
 
 export const upsertProductRecord = async (product: Stripe.Product) => {
+  console.log(product, "PRODUCT");
   const productData: Product = {
     id: product.id,
     active: product.active,
@@ -21,38 +27,55 @@ export const upsertProductRecord = async (product: Stripe.Product) => {
       .insert(products)
       .values(productData)
       .onConflictDoUpdate({ target: products.id, set: productData });
-  } catch (error: any) {
-    throw new Error(`Error upserting product record: ${error}`);
+  } catch (error) {
+    throw new Error();
   }
+  console.log("Product inserted/updates:", product.id);
+};
 
-  console.log(`Product record upserted: ${product.id}`);
+export const deleteProductRecord = async (productId: string) => {
+  try {
+    await db.delete(products).where(eq(products.id, productId));
+  } catch (error) {
+    throw new Error(`Could not delete the product ${error}`);
+  }
+  console.log(`Product deleted: ${productId}`);
 };
 
 export const upsertPriceRecord = async (price: Stripe.Price) => {
-  const priceData = {
+  console.log(price, "PRICE");
+  const priceData: Price = {
     id: price.id,
     productId: typeof price.product === "string" ? price.product : null,
     active: price.active,
     currency: price.currency,
     description: price.nickname ?? null,
     type: price.type,
-    unitAmount: price.unit_amount,
+    unitAmount: price.unit_amount ?? null,
     interval: price.recurring?.interval ?? null,
     intervalCount: price.recurring?.interval_count ?? null,
     trialPeriodDays: price.recurring?.trial_period_days ?? null,
     metadata: price.metadata,
   };
-
   try {
     await db
       .insert(prices)
       .values(priceData)
       .onConflictDoUpdate({ target: prices.id, set: priceData });
-  } catch (error: any) {
-    throw new Error(`Error upserting price record: ${error}`);
+  } catch (error) {
+    throw new Error(`Could not insert/update the price ${error}`);
   }
-  console.log(`Price record upserted: ${price.id}`);
+  console.log(`Price inserted/updated: ${price.id}`);
 };
+
+export const deletePriceRecord= async(pricesId: string) => {
+  try {
+    await db.delete(prices).where(eq(prices.id, pricesId));
+  } catch (error) {
+    throw new Error(`Could not delete the price ${error}`);
+  }
+  console.log(`Price deleted: ${pricesId}`);
+}
 
 export const createOrRetrieveCustomer = async ({
   email,
@@ -68,14 +91,12 @@ export const createOrRetrieveCustomer = async ({
     if (!response) throw new Error();
     return response.stripeCustomerId;
   } catch (error) {
-    const customerData: {
-      metadata: { supabaseUUID: string };
-      email?: string;
-    } = {
-      metadata: {
-        supabaseUUID: uuid,
-      },
-    };
+    const customerData: { metadata: { supabaseUUID: string }; email?: string } =
+      {
+        metadata: {
+          supabaseUUID: uuid,
+        },
+      };
     if (email) customerData.email = email;
     try {
       const customer = await stripe.customers.create(customerData);
@@ -174,6 +195,6 @@ export const manageSubscriptionStatusChange = async (
       );
     }
   } catch (error) {
-    throw new Error(`🔴Error managing subscription: ${error}`);
+    throw error;
   }
 };

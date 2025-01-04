@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/accordion";
 import DropDown from "./dropdown";
 import useSupabaseRealtime from "@/lib/hooks/use-supabase-realtime";
-import { useSubscriptionModal } from "@/lib/server-action/subscription-modal-provider";
+import { useSubscriptionModal } from "@/lib/providers/subscription-modal-provider";
 
 interface FoldersDropdownListProps {
   workspaceFolders: Folder[];
@@ -144,9 +144,9 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
       >
         {folders
           .filter((folder) => !folder.inTrash)
-          .map((folder) => (
+          .map((folder, index) => (
             <DropDown
-              key={folder.id}
+              key={index}
               title={folder.title}
               listType="folder"
               id={folder.id}

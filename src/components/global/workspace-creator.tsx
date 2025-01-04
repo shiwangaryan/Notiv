@@ -169,12 +169,12 @@ const WorkspaceCreator = () => {
             border-muted-foreground/20"
             >
               {collaborators.length ? (
-                collaborators.map((c) => (
+                collaborators.map((c, index) => (
                   <div
                     className="p-4 flex
                     justify-center
                     items-center"
-                    key={c.id}
+                    key={index}
                   >
                     <div className="flex gap-4 items-center">
                       <Avatar>

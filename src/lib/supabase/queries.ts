@@ -9,10 +9,27 @@ import {
   users,
   workspaces,
 } from "../../../migrations/schema";
-import { File, Folder, Subscription, User, Workspace } from "./supabase.types";
+import {
+  File,
+  Folder,
+  Price,
+  Subscription,
+  User,
+  Workspace,
+} from "./supabase.types";
 import { and, eq, ilike, InferSelectModel, notExists } from "drizzle-orm";
 import { collaborators } from "./schema";
 import { revalidatePath } from "next/cache";
+
+type Product = {
+  id: string;
+  active: boolean;
+  name: string;
+  description: string;
+  image: string;
+  metadata: Record<string, any>;
+  prices: Price[];
+};
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -271,24 +288,32 @@ export const findUser = async (userId: string) => {
   return response;
 };
 
-export const getActiveProductsWithPrice = async () => {
+export const getActiveProductsWithPrice = async (): Promise<{
+  data: any[];
+  error: string | null;
+}> => {
   try {
-    const res = await db.query.products.findMany({
+    const products = await db.query.products.findMany({
       where: (pro, { eq }) => eq(pro.active, true),
-
-      with: {
-        prices: {
-          where: (
-            pri: InferSelectModel<typeof prices>,
-            { eq }: { eq: (a: any, b: any) => boolean }
-          ) => eq(pri.active, true),
-        },
-      },
     });
-    if (res.length) return { data: res, error: null };
+
+    if (products.length) {
+      const productsWithPrices = await Promise.all(
+        products.map(async (product) => {
+          const prices = await db.query.prices.findMany({
+            where: (pri, { eq }) =>
+              eq(pri.productId, product.id) && eq(pri.active, true),
+          });
+          return { ...product, prices };
+        })
+      );
+
+      return { data: productsWithPrices, error: null };
+    }
+    
     return { data: [], error: "No such found" };
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    console.log(`Console error: ${error}`);
     return { data: [], error };
   }
 };

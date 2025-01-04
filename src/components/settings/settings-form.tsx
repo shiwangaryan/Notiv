@@ -2,7 +2,6 @@
 import { useToast } from "@/hooks/use-toast";
 import { useAppState } from "@/lib/providers/state-provider";
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
-import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabase";
 import {
   addWorkspaceCollaborators,
   changeProfilePicture,
@@ -58,7 +57,9 @@ import { twMerge } from "tailwind-merge";
 import CypressProfileIcon from "../icons/cypressProfileIcon";
 import LogoutButton from "../global/logout-button";
 import Link from "next/link";
-import { useSubscriptionModal } from "@/lib/server-action/subscription-modal-provider";
+import { useSubscriptionModal } from "@/lib/providers/subscription-modal-provider";
+import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabase";
+import { postData } from "@/lib/utils";
 
 const SettingsForm = () => {
   const { toast } = useToast();
@@ -75,6 +76,7 @@ const SettingsForm = () => {
   const [uploadingProfilePic, setUploadingProfilePic] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [loadingPortal, setLoadingPortal] = useState(false);
   // WIP PAYMENT PORTAL
 
   //delete workspace
@@ -93,6 +95,10 @@ const SettingsForm = () => {
     if (!workspaceId) return;
     //WIP Subscription
 
+    if (subscription?.status === "active" && collaborators.length >= 2) {
+      setOpen(true);
+      return;
+    }
     await addWorkspaceCollaborators([profile], workspaceId);
     setCollaborators([...collaborators, profile]);
     // router.refresh();
@@ -165,6 +171,25 @@ const SettingsForm = () => {
   };
 
   //on clicks
+  const redirectToCustomerPortal = async () => {
+    setLoadingPortal(true);
+    try {
+      const { url, error } = await postData({
+        url: "/api/create-portal-link",
+      });
+      window.location.assign(url);
+    } catch (error) {
+      console.error("Error in redirectToCustomerPortal", error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
+
   const onClickAlertConfirm = async () => {
     if (!workspaceId) return;
     if (collaborators.length > 0) {
@@ -484,8 +509,10 @@ const SettingsForm = () => {
               size="sm"
               variant={"secondary"}
               className="text-sm"
+              disabled={loadingPortal}
+              onClick={redirectToCustomerPortal}
             >
-              Manage Subscription
+              {loadingPortal ? <Loader /> : "Manage Subscription"}
             </Button>
           </div>
         ) : (
