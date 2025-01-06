@@ -271,7 +271,7 @@ const SettingsForm = () => {
           <Briefcase size={20} />
           Workspace
         </p>
-        <small className="text-white/35 cursor-not-allowed">
+        <small className="text-white/35 cursor-text">
           {user ? user.email : ""}
         </small>
       </div>
@@ -482,18 +482,22 @@ const SettingsForm = () => {
             />
           </div>
         </div>
-        <LogoutButton>
-          <div className="flex items-center">
-            <LogOut />
-          </div>
-        </LogoutButton>
+        <div className="flex text-sm items-center gap-2">
+          <LogoutButton>
+            <div className="flex items-center gap-1 ">
+              <LogOut />
+            </div>
+          </LogoutButton>
+          Logout
+        </div>
         <p className="flex items-center gap-2 mt-6">
           <CreditCard size={20} /> Billing & Plan
         </p>
         <Separator />
         <p className="text-muted-foreground">
           You are currently on a{" "}
-          {subscription?.status === "active" ? "Pro" : "Free"} Plan
+          {subscription?.status === "active" ? "Pro" : "Free"} Plan{" "}
+          {subscription?.status === "active" ? "✨" : ""}
         </p>
         <Link
           href="/"

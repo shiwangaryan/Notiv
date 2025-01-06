@@ -396,7 +396,7 @@ const DropDown: React.FC<DropDownProps> = ({
               }
             />
           </div>
-          <div className={hoverStyles}>
+          <div className={clsx('mt-1',hoverStyles)}>
             <TooltipComponent message="Delete Folder">
               <Trash
                 onClick={moveToTrash}
