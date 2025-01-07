@@ -118,7 +118,7 @@ export const copyBillingDetailsToCustomer = async (
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
-  //@ts-ignore
+  //@ts-expect-error
   await stripe.customers.update(customer, { name, phone, address });
   try {
     await db
@@ -153,10 +153,10 @@ export const manageSubscriptionStatusChange = async (
       id: subscription.id,
       userId: uuid,
       metadata: subscription.metadata,
-      //@ts-ignore
+      //@ts-expect-error
       status: subscription.status,
       priceId: subscription.items.data[0].price.id,
-      //@ts-ignore
+      //@ts-expect-error
       quantity: subscription.quantity,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       cancelAt: subscription.cancel_at

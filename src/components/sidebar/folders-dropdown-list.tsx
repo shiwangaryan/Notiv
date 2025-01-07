@@ -10,9 +10,6 @@ import { createFolder } from "@/lib/supabase/queries";
 import { useToast } from "@/hooks/use-toast";
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
 } from "@/components/ui/accordion";
 import DropDown from "./dropdown";
 import useSupabaseRealtime from "@/lib/hooks/use-supabase-realtime";
@@ -61,7 +58,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
       state.workspaces.find((workspace) => workspace.id === workspaceId)
         ?.folders || []
     );
-  }, [state, workspaceId]);
+  }, [state, workspaceId, dispatch]);
 
   //add folder
   const addFolderHandler = async () => {
@@ -89,7 +86,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
       },
     });
 
-    const { data, error } = await createFolder(newFolder);
+    const { error } = await createFolder(newFolder);
     if (error) {
       toast({
         title: "Error",

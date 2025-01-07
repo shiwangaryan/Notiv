@@ -19,7 +19,7 @@ export async function actionSignupUser({
 }: z.infer<typeof FormSchema>) {
   const supabase = await createServerSupabaseClient();
 
-  let { data: users, error } = await supabase
+  const { data: users, error } = await supabase
     .from("users")
     .select()
     .eq("email", "shiwangaryan@gmail.com");

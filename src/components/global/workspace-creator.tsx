@@ -23,7 +23,6 @@ import {
 import CollaboratorsSearch from "./collaborators-search";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { mockCollaborators } from "./fake-constants";
 import Loader from "./loader";
 import { useToast } from "@/hooks/use-toast";
 

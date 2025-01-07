@@ -26,7 +26,6 @@ import { MailCheck } from "lucide-react";
 import { actionSignupUser } from "@/lib/server-action/auth-actions";
 
 const Signup = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [submitError, setSubmitError] = useState("");
   const [confirmation, setConfirmation] = useState(false);
@@ -43,7 +42,7 @@ const Signup = () => {
         "border-red-500/60": codeExchangeError,
         "text-red-700": codeExchangeError,
       }),
-    []
+    [codeExchangeError]
   );
 
   const form = useForm<z.infer<typeof SignupFormSchema>>({

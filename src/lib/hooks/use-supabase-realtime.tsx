@@ -166,7 +166,7 @@ const useSupabaseRealtime = () => {
               });
             }
           } else if (payload.eventType === "UPDATE") {
-            const { folder_id: folderId, workspace_id: workspaceId } =
+            const { workspace_id: workspaceId } =
               payload.new;
             state.workspaces.some((workspace) =>
               workspace.folders.some((folder) => {

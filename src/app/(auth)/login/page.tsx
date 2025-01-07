@@ -49,7 +49,7 @@ const LoginPage = () => {
     if (submitError) {
       setSubmiteError(""); // Reset submitError on any form change
     }
-  }, [form.watch()]);
+  }, [submitError, form.watch()]);
   return (
     <Form {...form}>
       <form
@@ -131,7 +131,7 @@ const LoginPage = () => {
           </Button>
         </div>
         <span className="self-center">
-          Don't have an account?
+          Does not have an account?
           <Link href={"/signup"} className="text-primary-blue-300">
             {" "}
             Sign up

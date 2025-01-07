@@ -38,7 +38,6 @@ import BannerUpload from "../banner-upload/banner-upload";
 import { XCircleIcon } from "lucide-react";
 import { useSocket } from "@/lib/providers/socket-provider";
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
-import { transform } from "next/dist/build/swc/generated-native";
 
 interface QuillEditorProps {
   dirType: "workspace" | "folder" | "file";
@@ -154,7 +153,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       inTrash: dirDetails.inTrash,
       bannerUrl: dirDetails.bannerUrl,
     } as Workspace | Folder | File;
-  }, [state, workspaceId, folderId, fileId]);
+  }, [state, workspaceId, folderId, fileId, dirDetails, dirType]);
 
   //know where you are
   const breadCrumbs = useMemo(() => {
@@ -346,14 +345,13 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         .getPublicUrl(details.bannerUrl).data.publicUrl;
       setTimestampedBannerUrl(`${publicUrl}?t=${new Date().getTime()}`);
     }
-  }, [state, details.bannerUrl]);
+  }, [state, details.bannerUrl, supabase]);
 
   // on change handler (so tht everything that has changed using
   // socket can be updated in local changes and also sent
   // all the events/update to other client )
   useEffect(() => {
     if (!fileId) return;
-    let selectedDir;
     const fetchInformation = async () => {
       if (dirType === "file") {
         const { data: selectedDir, error } = await getFileDetails(fileId);
@@ -417,7 +415,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       }
     };
     fetchInformation();
-  }, [fileId, workspaceId, quill, dirType]);
+  }, [fileId, workspaceId, quill, dirType, dispatch]);
 
   //rooms
   useEffect(() => {
@@ -497,7 +495,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       quill.off("selection-change", selectionChangeHandler);
       if (saveTimeRef.current) clearTimeout(saveTimeRef.current);
     };
-  }, [quill, socket, fileId, user, details, folderId, workspaceId, dispatch]);
+  }, [quill, socket, fileId, user, details, folderId, workspaceId, dispatch, dirType]);
 
   // receiving data from other clients
   useEffect(() => {

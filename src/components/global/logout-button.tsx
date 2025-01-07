@@ -11,7 +11,7 @@ interface LogoutButtonProps {
 }
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({ children }) => {
-  const { user } = useSupabaseUser();
+  // const { user } = useSupabaseUser();
   const { dispatch } = useAppState();
   const router = useRouter();
   const supabase = createClientSupabaseClient();

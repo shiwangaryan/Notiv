@@ -1,16 +1,12 @@
 export const dynamic = "force-dynamic";
 
 import QuillEditor from "@/components/quill-editor/quill-editor";
-import { getFileDetails, getFolderDetails } from "@/lib/supabase/queries";
+import { getFileDetails } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const FilePage = async ({
-  params,
-}: {
-  params: { workspaceId: string; folderId: string; fileId: string };
-}) => {
-  const { fileId } = await params;
+const FilePage = async ({ params }: { params: { fileId: string } }) => {
+  const { fileId } =  params;
   const { data, error } = await getFileDetails(fileId);
   if (error || !data.length) {
     console.log(`error in file page: ${error}`);

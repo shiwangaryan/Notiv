@@ -21,7 +21,7 @@ import {
   LogOut,
   Plus,
   Share,
-  User as UserIcon,
+  // User as UserIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -46,7 +46,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import CollaboratorsSearch from "../global/collaborators-search";
 import { Button } from "../ui/button";

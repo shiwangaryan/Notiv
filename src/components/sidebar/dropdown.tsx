@@ -32,11 +32,11 @@ const DropDown: React.FC<DropDownProps> = ({
   id,
   listType,
   iconId,
-  children,
-  disabled,
-  ...props
+  // children,
+  // disabled,
+  // ...props
 }) => {
-  const supabase = createClientSupabaseClient();
+  // const supabase = createClientSupabaseClient();
   const { user } = useSupabaseUser();
   const { state, dispatch, workspaceId, folderId } = useAppState();
   const [isEditing, setIsEditing] = useState(false);
@@ -89,7 +89,7 @@ const DropDown: React.FC<DropDownProps> = ({
 
     if (fileAndFolderId.length === 1) {
       if (!folderTitle) return;
-      const { data, error } = await updateFolder(
+      const {  error } = await updateFolder(
         { title: folderTitle },
         fileAndFolderId[0]
       );
@@ -107,7 +107,7 @@ const DropDown: React.FC<DropDownProps> = ({
       }
     } else if (fileAndFolderId.length === 2 && fileAndFolderId[1]) {
       if (!fileTitle) return;
-      const { data, error } = await updateFile(
+      const {  error } = await updateFile(
         { title: fileTitle },
         fileAndFolderId[1]
       );
@@ -141,7 +141,7 @@ const DropDown: React.FC<DropDownProps> = ({
         },
       });
 
-      const { data, error } = await updateFolder({ iconId: selectedEmoji }, id);
+      const {  error } = await updateFolder({ iconId: selectedEmoji }, id);
 
       if (error) {
         toast({
@@ -166,7 +166,7 @@ const DropDown: React.FC<DropDownProps> = ({
           file: { iconId: selectedEmoji },
         },
       });
-      const { data, error } = await updateFile(
+      const {  error } = await updateFile(
         { iconId: selectedEmoji },
         fileAndFolderId[1]
       );
@@ -241,7 +241,7 @@ const DropDown: React.FC<DropDownProps> = ({
       payload: { file: newFile, workspaceId, folderId: id },
     });
 
-    const { data, error } = await createFile(newFile);
+    const {  error } = await createFile(newFile);
     if (error) {
       toast({
         title: "Error",
@@ -261,7 +261,7 @@ const DropDown: React.FC<DropDownProps> = ({
     if (!user || !workspaceId) return;
     const fileAndFolderId = id.split("folder");
     if (listType === "folder") {
-      const { data, error } = await updateFolder(
+      const {  error } = await updateFolder(
         { inTrash: `Deleted by ${user?.email}` },
         fileAndFolderId[0]
       );
@@ -287,7 +287,7 @@ const DropDown: React.FC<DropDownProps> = ({
         });
       }
     } else if (listType === "file") {
-      const { data, error } = await updateFile(
+      const {  error } = await updateFile(
         { inTrash: `Deleted by ${user?.email}` },
         fileAndFolderId[1]
       );
@@ -347,7 +347,7 @@ const DropDown: React.FC<DropDownProps> = ({
           "group-hover/folder:block": listType === "folder",
         }
       ),
-    [isFolder]
+    [isFolder, listType]
   );
 
   return (

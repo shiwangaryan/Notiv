@@ -28,18 +28,14 @@ interface BannerUploadProps {
   details: appWorkspacesType | appFoldersType | Workspace | Folder | File;
 }
 
-const BannerUploadForm: React.FC<BannerUploadProps> = ({
-  dirType,
-  id,
-  details,
-}) => {
+const BannerUploadForm: React.FC<BannerUploadProps> = ({ dirType, id }) => {
   const supabase = createClientSupabaseClient();
-  const { state, workspaceId, folderId, fileId, dispatch } = useAppState();
+  const { workspaceId, folderId, dispatch } = useAppState();
   const { toast } = useToast();
   const {
     register,
     handleSubmit,
-    reset,
+
     formState: { isSubmitting: isUploading, errors },
   } = useForm<z.infer<typeof UploadBannerFormSchema>>({
     mode: "onChange",

@@ -6,7 +6,6 @@ import SelectedWorkspace from "./selected-workspace";
 import CustomDialogTrigger from "../global/custom-dialog";
 import WorkspaceCreator from "../global/workspace-creator";
 import { Plus } from "lucide-react";
-import { twMerge } from "tailwind-merge";
 
 interface WorkspaceDropdownProps {
   privateWorkspace: Workspace[] | [];
@@ -43,7 +42,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
         },
       });
     }
-  }, [privateWorkspace, sharedWorkspace, collaboratingWorkspace]);
+  }, [privateWorkspace, sharedWorkspace, collaboratingWorkspace, dispatch]);
 
   // in real time update the selected workspace name when editing the name in settings
   useEffect(() => {

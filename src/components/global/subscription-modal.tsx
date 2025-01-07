@@ -71,7 +71,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ products }) => {
             To access Pro features you need to have a paid plan.
           </DialogDescription>
           {products.length
-            ? products.map((product, index) => (
+            ? products.map((product) => (
                 <div
                   key={product.name}
                   className="flex

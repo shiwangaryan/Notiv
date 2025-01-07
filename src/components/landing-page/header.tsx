@@ -7,23 +7,21 @@ import Logo from "../../../public/notivlogo.svg";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
-const routes = [
-  { title: "Features", href: "#features" },
-  { title: "Reasources", href: "#resources" },
-  { title: "Pricing", href: "#pricing" },
-  { title: "Testimonials", href: "#testimonial" },
-];
+// const routes = [
+//   { title: "Features", href: "#features" },
+//   { title: "Reasources", href: "#resources" },
+//   { title: "Pricing", href: "#pricing" },
+//   { title: "Testimonials", href: "#testimonial" },
+// ];
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -264,7 +262,7 @@ export default Header;
 const ListItems = React.forwardRef<
   React.ComponentRef<"a">,
   React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
+>(({ title, children, ...props }, ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>
