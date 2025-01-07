@@ -5,14 +5,22 @@ import { getFolderDetails } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const FolderPage = async ({ params }: { params: { folderId: string } }) => {
+type FolderParams = Promise<{
+  folderId: string;
+}>;
+
+const FolderPage = async ({ params }: { params: FolderParams }) => {
   const { folderId } = await params;
   const { data, error } = await getFolderDetails(folderId);
   if (error || !data.length) redirect("/dashboard");
 
   return (
     <div className="relative">
-      <QuillEditor dirType="folder" fileId={folderId} dirDetails={data[0] || {}} />
+      <QuillEditor
+        dirType="folder"
+        fileId={folderId}
+        dirDetails={data[0] || {}}
+      />
     </div>
   );
 };

@@ -5,8 +5,12 @@ import { getFileDetails } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const FilePage = async ({ params }: { params: { fileId: string } }) => {
-  const { fileId } =  params;
+type FilePageProps = Promise<{
+  fileId: string;
+}>;
+
+const FilePage = async ({ params }: { params: FilePageProps }) => {
+  const { fileId } = await params;
   const { data, error } = await getFileDetails(fileId);
   if (error || !data.length) {
     console.log(`error in file page: ${error}`);

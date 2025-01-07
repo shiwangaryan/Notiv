@@ -49,7 +49,7 @@ const LoginPage = () => {
     if (submitError) {
       setSubmiteError(""); // Reset submitError on any form change
     }
-  }, [submitError, form.watch()]);
+  }, [submitError]);
   return (
     <Form {...form}>
       <form

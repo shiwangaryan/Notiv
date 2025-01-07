@@ -3,7 +3,7 @@
 import { FormSchema, SignupFormSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
