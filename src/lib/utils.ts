@@ -23,8 +23,7 @@ export const toDateTime = (secs: number) => {
 
 export const getURL = () => {
   let url =
-    process?.env?.NEXT_PUBLIC_SITE_URL ??
-    "http://localhost:3000";
+    process?.env?.NEXT_PUBLIC_SITE_URL ?? "https://notiv.up.railway.app";
   // url = url.includes("https") ? url : `http://${url}`;
   url = url.charAt(url.length - 1) === "/" ? url : `${url}/`;
   return url;
