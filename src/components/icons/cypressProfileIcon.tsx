@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-interface CypressProfileIconProps {}
+type CypressProfileIconProps = Record<string, never>;
 const CypressProfileIcon: FC<CypressProfileIconProps> = () => {
   return (
     <svg

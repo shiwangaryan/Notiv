@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       uuid: user?.id || "",
     });
     const session = await stripe.checkout.sessions.create({
-      //@ts-expect-error
+      //@ts-expect-error: Stripe types are not compatible with our customer object
       payment_method_types: ["card"],
       billing_address_collection: "required",
       customer,

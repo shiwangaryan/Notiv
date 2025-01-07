@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/providers/next-theme-provider";
 import { DM_Sans } from "next/font/google";

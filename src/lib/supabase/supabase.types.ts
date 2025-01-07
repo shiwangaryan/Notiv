@@ -19,31 +19,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-          extensions?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       collaborators: {
@@ -108,7 +83,7 @@ export type Database = {
       files: {
         Row: {
           banner_url: string | null;
-          created_at: string | null;
+          created_at: string;
           data: string | null;
           folder_id: string;
           icon_id: string;
@@ -119,7 +94,7 @@ export type Database = {
         };
         Insert: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           folder_id: string;
           icon_id: string;
@@ -130,7 +105,7 @@ export type Database = {
         };
         Update: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           folder_id?: string;
           icon_id?: string;
@@ -159,7 +134,7 @@ export type Database = {
       folders: {
         Row: {
           banner_url: string | null;
-          created_at: string | null;
+          created_at: string;
           data: string | null;
           icon_id: string;
           id: string;
@@ -169,7 +144,7 @@ export type Database = {
         };
         Insert: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           icon_id: string;
           id?: string;
@@ -179,7 +154,7 @@ export type Database = {
         };
         Update: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           icon_id?: string;
           id?: string;
@@ -417,7 +392,7 @@ export type Database = {
       workspaces: {
         Row: {
           banner_url: string | null;
-          created_at: string | null;
+          created_at: string;
           data: string | null;
           icon_id: string;
           id: string;
@@ -428,7 +403,7 @@ export type Database = {
         };
         Insert: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           icon_id: string;
           id?: string;
@@ -439,7 +414,7 @@ export type Database = {
         };
         Update: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           icon_id?: string;
           id?: string;

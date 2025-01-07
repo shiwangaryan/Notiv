@@ -45,7 +45,7 @@ interface QuillEditorProps {
   dirDetails: Workspace | Folder | File;
 }
 
-var TOOLBAR_OPTIONS = [
+const TOOLBAR_OPTIONS = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
   ["blockquote", "code-block"],
 
@@ -415,7 +415,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       }
     };
     fetchInformation();
-  }, [fileId, workspaceId, quill, dirType, dispatch]);
+  }, [fileId, workspaceId, quill, dirType, dispatch, router]);
 
   //rooms
   useEffect(() => {
@@ -532,7 +532,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   useEffect(() => {
     if (!fileId || !quill) return;
     const room = supabase.channel(fileId);
-    const subscription = room
+    room
       .on("presence", { event: "sync" }, () => {
         const newState = room.presenceState();
         const newCollaborators = Object.values(newState).flat() as any;
@@ -646,6 +646,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         >
           <div>{breadCrumbs}</div>
           <div className="flex items-center gap-4">
+            
             <div className="flex items-center justify-center h-10">
               {collaborators?.map((collaborator) => (
                 <TooltipProvider key={collaborator.id}>

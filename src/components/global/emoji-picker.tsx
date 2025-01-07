@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { useRouter } from "next/navigation";
 
 interface EmojiPickerProps {
   children: React.ReactNode;
@@ -10,7 +9,7 @@ interface EmojiPickerProps {
 }
 const EmojiPicker: React.FC<EmojiPickerProps> = ({ children, getValue }) => {
   const Picker = dynamic(() => import("emoji-picker-react"), { ssr: false });
-  const onClick = (selectedEmoji: any) => {
+  const onClick = (selectedEmoji: { emoji: string }) => {
     if (getValue) getValue(selectedEmoji.emoji);
   };
 

@@ -1,6 +1,6 @@
 "use client";
 import { useAppState } from "@/lib/providers/state-provider";
-import { Folder, Workspace } from "@/lib/supabase/supabase.types";
+import { Folder } from "@/lib/supabase/supabase.types";
 import React, { useEffect, useState } from "react";
 import TooltipComponent from "../global/tool-tip";
 import { PlusIcon } from "lucide-react";
@@ -8,9 +8,7 @@ import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import { v4 } from "uuid";
 import { createFolder } from "@/lib/supabase/queries";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Accordion,
-} from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import DropDown from "./dropdown";
 import useSupabaseRealtime from "@/lib/hooks/use-supabase-realtime";
 import { useSubscriptionModal } from "@/lib/providers/subscription-modal-provider";
@@ -50,7 +48,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
         },
       });
     }
-  }, [workspaceFolders, workspaceId]);
+  }, [workspaceFolders, workspaceId, dispatch, state.workspaces]);
 
   //state
   useEffect(() => {

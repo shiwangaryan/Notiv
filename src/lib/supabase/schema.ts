@@ -20,7 +20,7 @@ export const workspaces = pgTable("workspaces", {
   })
     .defaultNow()
     .notNull(),
-  workspacOwner: uuid("workshpace_owner").notNull(),
+  workspaceOwner: uuid("workspace_owner").notNull(),
   title: text("title").notNull(),
   iconId: text("icon_id").notNull(),
   data: text("data"),

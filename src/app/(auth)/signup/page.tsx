@@ -1,10 +1,10 @@
 "use client";
 
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { FormSchema, SignupFormSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
-import { useSearchParams } from "next/navigation";
-import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -25,7 +25,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MailCheck } from "lucide-react";
 import { actionSignupUser } from "@/lib/server-action/auth-actions";
 
-const Signup = () => {
+const SignupForm = () => {
   const searchParams = useSearchParams();
   const [submitError, setSubmitError] = useState("");
   const [confirmation, setConfirmation] = useState(false);
@@ -71,28 +71,11 @@ const Signup = () => {
           if (submitError) setSubmitError("");
         }}
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full
-      sm:justify-center
-      sm:w-[400px]
-      space-y-6
-      flex
-      flex-col"
+        className="w-full sm:justify-center sm:w-[400px] space-y-6 flex flex-col"
       >
-        <Link
-          href="/"
-          className="w-full
-        flex
-        justify-left
-        items-center"
-        >
+        <Link href="/" className="w-full flex justify-left items-center">
           <Image src={NotivLogo} alt="Notiv Logo" width={50} height={50} />
-          <span
-            className="font-semibold
-          dark:text-white
-          text-4xl
-          ml-2
-          "
-          >
+          <span className="font-semibold dark:text-white text-4xl ml-2">
             notiv.
           </span>
         </Link>
@@ -113,7 +96,7 @@ const Signup = () => {
                   <FormMessage />
                 </FormItem>
               )}
-            ></FormField>
+            />
             <FormField
               disabled={isLoading}
               control={form.control}
@@ -126,7 +109,7 @@ const Signup = () => {
                   <FormMessage />
                 </FormItem>
               )}
-            ></FormField>
+            />
             <FormField
               disabled={isLoading}
               control={form.control}
@@ -143,21 +126,11 @@ const Signup = () => {
                   <FormMessage />
                 </FormItem>
               )}
-            ></FormField>
-            <div
-              className="w-full flex flex-col justify-center items-center
-              h-[50px]
-        hover:p-[2.5px]
-        rounded-[8px]
-        bg-gradient-to-r
-        from-primary-blue-200
-        to-primary-purple-600
-        transition-all duration-300 ease-in-out"
-            >
+            />
+            <div className="w-full flex flex-col justify-center items-center h-[50px] hover:p-[2.5px] rounded-[8px] bg-gradient-to-r from-primary-blue-200 to-primary-purple-600 transition-all duration-300 ease-in-out">
               <Button
                 type="submit"
-                className=" w-full h-full text-[15px] hover:bg-white/95
-                transition-all duration-300 ease-in-out"
+                className="w-full h-full text-[15px] hover:bg-white/95 transition-all duration-300 ease-in-out"
                 disabled={isLoading}
               >
                 {!isLoading ? "Create Account" : <Loader />}
@@ -169,9 +142,8 @@ const Signup = () => {
           <FormMessage className="text-red-500">{submitError}</FormMessage>
         )}
         <span className="self-center">
-          Already have an account?
+          Already have an account?{" "}
           <Link href={"/login"} className="text-primary-blue-300">
-            {" "}
             Login
           </Link>
         </span>
@@ -184,13 +156,21 @@ const Signup = () => {
               </AlertTitle>
               <AlertDescription>
                 {codeExchangeError ||
-                  "An email confirmation link has been sent.\nPlease Verify !"}
+                  "An email confirmation link has been sent.\nPlease Verify!"}
               </AlertDescription>
             </Alert>
           </>
         )}
       </form>
     </Form>
+  );
+};
+
+const Signup = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignupForm />
+    </Suspense>
   );
 };
 

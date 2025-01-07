@@ -1,35 +1,26 @@
 "use server";
-
 import db from "./db";
 import { validate } from "uuid";
-import {
-  files,
-  folders,
-  prices,
-  users,
-  workspaces,
-} from "../../../migrations/schema";
+import { files, folders, users, workspaces } from "../../../migrations/schema";
 import {
   File,
   Folder,
-  Price,
   Subscription,
   User,
   Workspace,
 } from "./supabase.types";
-import { and, eq, ilike, InferSelectModel, notExists } from "drizzle-orm";
+import { and, eq, ilike, notExists } from "drizzle-orm";
 import { collaborators } from "./schema";
-import { revalidatePath } from "next/cache";
 
-type Product = {
-  id: string;
-  active: boolean;
-  name: string;
-  description: string;
-  image: string;
-  metadata: Record<string, any>;
-  prices: Price[];
-};
+// type Product = {
+//   id: string;
+//   active: boolean;
+//   name: string;
+//   description: string;
+//   image: string;
+//   metadata: Record<string, any>;
+//   prices: Price[];
+// };
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -45,7 +36,7 @@ export const getUserSubscriptionStatus = async (userId: string) => {
 };
 export const createWorkspace = async (workspace: Workspace) => {
   try {
-    const response = await db.insert(workspaces).values(workspace);
+    await db.insert(workspaces).values(workspace);
     return { data: null, error: null };
   } catch (error) {
     console.log(`Error creating workspace: ${error}`);
@@ -112,8 +103,10 @@ export const getWorkspaceDetails = async (workspaceId: string) => {
 export const getFileDetails = async (fileId: string) => {
   const isValid = validate(fileId);
   if (!isValid) {
-    data: [];
-    error: "Error";
+    return {
+      data: [],
+      error: "Error",
+    };
   }
   try {
     const response = (await db
@@ -142,8 +135,10 @@ export const deleteFolder = async (folderId: string) => {
 export const getFolderDetails = async (folderId: string) => {
   const isValid = validate(folderId);
   if (!isValid) {
-    data: [];
-    error: "Error";
+    return {
+      data: [],
+      error: "Error",
+    };
   }
 
   try {
@@ -155,6 +150,7 @@ export const getFolderDetails = async (folderId: string) => {
 
     return { data: response, error: null };
   } catch (error) {
+    console.log("🔴Error in get folder", error);
     return { data: [], error: "Error" };
   }
 };
@@ -250,7 +246,7 @@ export const addWorkspaceCollaborators = async (
   users: User[],
   workspaceId: string
 ) => {
-  const response = users.forEach(async (user: User) => {
+  users.forEach(async (user: User) => {
     const userExists = await db.query.collaborators.findFirst({
       where: (u, { eq }) =>
         and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
@@ -264,7 +260,7 @@ export const removeWorkspaceCollaborators = async (
   users: User[],
   workspaceId: string
 ) => {
-  const response = users.forEach(async (user: User) => {
+  users.forEach(async (user: User) => {
     const userExists = await db.query.collaborators.findFirst({
       where: (u, { eq }) =>
         and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
@@ -310,7 +306,7 @@ export const getActiveProductsWithPrice = async (): Promise<{
 
       return { data: productsWithPrices, error: null };
     }
-    
+
     return { data: [], error: "No such found" };
   } catch (error: any) {
     console.log(`Console error: ${error}`);
@@ -320,7 +316,7 @@ export const getActiveProductsWithPrice = async (): Promise<{
 
 export const createFolder = async (folder: Folder) => {
   try {
-    const results = await db.insert(folders).values(folder);
+    await db.insert(folders).values(folder);
     return { data: null, error: null };
   } catch (error) {
     console.log(error);
@@ -353,10 +349,7 @@ export const updateFolder = async (
 
 export const updateFile = async (file: Partial<File>, fileId: string) => {
   try {
-    const response = await db
-      .update(files)
-      .set(file)
-      .where(eq(files.id, fileId));
+    await db.update(files).set(file).where(eq(files.id, fileId));
     return { data: null, error: null };
   } catch (error) {
     console.log(error);

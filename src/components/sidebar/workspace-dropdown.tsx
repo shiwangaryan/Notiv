@@ -42,7 +42,13 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
         },
       });
     }
-  }, [privateWorkspace, sharedWorkspace, collaboratingWorkspace, dispatch]);
+  }, [
+    privateWorkspace,
+    sharedWorkspace,
+    collaboratingWorkspace,
+    dispatch,
+    state.workspaces.length,
+  ]);
 
   // in real time update the selected workspace name when editing the name in settings
   useEffect(() => {

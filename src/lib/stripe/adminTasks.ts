@@ -28,7 +28,7 @@ export const upsertProductRecord = async (product: Stripe.Product) => {
       .values(productData)
       .onConflictDoUpdate({ target: products.id, set: productData });
   } catch (error) {
-    throw new Error();
+    throw new Error(`Could not insert/update the product ${error}`);
   }
   console.log("Product inserted/updates:", product.id);
 };
@@ -91,6 +91,7 @@ export const createOrRetrieveCustomer = async ({
     if (!response) throw new Error();
     return response.stripeCustomerId;
   } catch (error) {
+    console.log(`Creating new customer for ${error}`);
     const customerData: { metadata: { supabaseUUID: string }; email?: string } =
       {
         metadata: {
@@ -106,7 +107,7 @@ export const createOrRetrieveCustomer = async ({
       console.log(`New customer created and inserted for ${uuid}.`);
       return customer.id;
     } catch (stripeError) {
-      throw new Error("Could not create Customer or find the customer");
+      throw new Error(`Could not create Customer or find the customer, ${stripeError}`);
     }
   }
 };
@@ -118,7 +119,7 @@ export const copyBillingDetailsToCustomer = async (
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
   if (!name || !phone || !address) return;
-  //@ts-expect-error
+  //@ts-expect-error: error incoming here
   await stripe.customers.update(customer, { name, phone, address });
   try {
     await db
@@ -129,7 +130,7 @@ export const copyBillingDetailsToCustomer = async (
       })
       .where(eq(users.id, uuid));
   } catch (error) {
-    throw new Error("Couldnot copy customer billing details");
+    throw new Error("Couldnot copy customer billing details ", error!);
   }
 };
 
@@ -153,10 +154,10 @@ export const manageSubscriptionStatusChange = async (
       id: subscription.id,
       userId: uuid,
       metadata: subscription.metadata,
-      //@ts-expect-error
+      //@ts-expect-error: error incoming
       status: subscription.status,
       priceId: subscription.items.data[0].price.id,
-      //@ts-expect-error
+      //@ts-expect-error: error incoming
       quantity: subscription.quantity,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       cancelAt: subscription.cancel_at

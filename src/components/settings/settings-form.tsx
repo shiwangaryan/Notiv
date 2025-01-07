@@ -79,15 +79,15 @@ const SettingsForm = () => {
   // WIP PAYMENT PORTAL
 
   //delete workspace
-  const deleteWorkspaceHandler = async (workspaceId: string) => {
-    if (!workspaceId) return;
-    await deleteWorkspace(workspaceId);
-    toast({
-      title: "Workspace deleted",
-      description: "Your workspace has been deleted",
-    });
-    router.replace("/dashboard");
-  };
+  // const deleteWorkspaceHandler = async (workspaceId: string) => {
+  //   if (!workspaceId) return;
+  //   await deleteWorkspace(workspaceId);
+  //   toast({
+  //     title: "Workspace deleted",
+  //     description: "Your workspace has been deleted",
+  //   });
+  //   router.replace("/dashboard");
+  // };
 
   //addCollaborators
   const addCollaborator = async (profile: User) => {
@@ -173,7 +173,7 @@ const SettingsForm = () => {
   const redirectToCustomerPortal = async () => {
     setLoadingPortal(true);
     try {
-      const { url, error } = await postData({
+      const { url } = await postData({
         url: "/api/create-portal-link",
       });
       window.location.assign(url);
@@ -227,19 +227,7 @@ const SettingsForm = () => {
     setAvatarUrl(timeStampedUrl);
     setUploadingProfilePic(false);
   };
-  //fetching avatar details
-  const getAvatar = async () => {
-    if (!user) return;
-    const response = await findUser(user.id);
-    if (!response) return "";
-    const avatarUrl = response.avatarUrl
-      ? supabase.storage.from("avatars").getPublicUrl(response.avatarUrl).data
-          .publicUrl
-      : "";
-    const timeStampedUrl = `${avatarUrl}?${new Date().getTime()}`;
-    setAvatarUrl(timeStampedUrl);
-    return;
-  };
+  
   //get workspace detials
   useEffect(() => {
     const currentWorkspace = state.workspaces.find((w) => w.id === workspaceId);
@@ -261,8 +249,20 @@ const SettingsForm = () => {
   }, [workspaceId]);
 
   useEffect(() => {
+    //fetching avatar details
+    const getAvatar = async () => {
+      if (!user) return;
+      const response = await findUser(user.id);
+      if (!response) return "";
+      const avatarUrl = response.avatarUrl
+        ? supabase.storage.from("avatars").getPublicUrl(response.avatarUrl).data
+            .publicUrl
+        : "";
+      const timeStampedUrl = `${avatarUrl}?${new Date().getTime()}`;
+      setAvatarUrl(timeStampedUrl);
+    };
     getAvatar();
-  }, [user]);
+  }, [user, supabase.storage]);
   return (
     <div className="flex gap-4 flex-col">
       <div className="flex flex-col ">
