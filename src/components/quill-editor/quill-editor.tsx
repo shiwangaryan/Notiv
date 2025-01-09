@@ -87,24 +87,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const [deletingBanner, setDeletingBanner] = useState(false);
   const [localCursors, setLocalCursors] = useState<any[]>([]);
 
-  // wrapper for quill editor
-  // const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
-  //   if (typeof window === "undefined" || wrapper === null) return;
-  //   wrapper.innerHTML = "";
-  //   const editor = document.createElement("div");
-  //   wrapper.append(editor);
-  //   import("quill").then((QuillModule) => {
-  //     const Quill = QuillModule.default;
-  //     //WIP cursors
-  //     const q = new Quill(editor, {
-  //       theme: "snow",
-  //       modules: {
-  //         toolbar: TOOLBAR_OPTIONS,
-  //       },
-  //     });
-  //     setQuill(q);
-  //   });
-  // }, []);
   const wrapperRef = useCallback((wrapper: HTMLDivElement | null) => {
     if (typeof window !== "undefined") {
       if (wrapper === null) return;
@@ -718,16 +700,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       {details.bannerUrl && timestampedBannerUrl !== "" && (
         <div className="relative w-full h-[230px]">
           <Image
-            // src={
-            //   supabase.storage
-            //     .from("file-banners")
-            //     .getPublicUrl(details.bannerUrl).data.publicUrl
-            // }
-            // src={`${
-            //   supabase.storage
-            //     .from("file-banners")
-            //     .getPublicUrl(details.bannerUrl).data.publicUrl
-            // }?t=${new Date().getTime()}`}
             src={timestampedBannerUrl}
             alt="Banner Image"
             fill

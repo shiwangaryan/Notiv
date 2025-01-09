@@ -22,7 +22,7 @@ export async function actionSignupUser({
   const { data: users, error } = await supabase
     .from("users")
     .select()
-    .eq("email", "shiwangaryan@gmail.com");
+    .eq("email", email);
 
   if (users?.length) return { error: { message: "User already exists", error } };
 

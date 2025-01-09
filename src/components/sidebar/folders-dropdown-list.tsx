@@ -48,15 +48,26 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
         },
       });
     }
-  }, [workspaceFolders, workspaceId, dispatch, state.workspaces]);
+  }, [workspaceFolders, workspaceId]);
 
   //state
   useEffect(() => {
-    setFolders(
+    // setFolders(
+    //   state.workspaces.find((workspace) => workspace.id === workspaceId)
+    //     ?.folders || []
+    // );
+    const workspaceFolders =
       state.workspaces.find((workspace) => workspace.id === workspaceId)
-        ?.folders || []
-    );
-  }, [state, workspaceId, dispatch]);
+        ?.folders || [];
+
+    // Prevent unnecessary state updates
+    setFolders((prevFolders) => {
+      if (JSON.stringify(prevFolders) !== JSON.stringify(workspaceFolders)) {
+        return workspaceFolders;
+      }
+      return prevFolders;
+    });
+  }, [ workspaceId]);
 
   //add folder
   const addFolderHandler = async () => {
@@ -139,9 +150,9 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
       >
         {folders
           .filter((folder) => !folder.inTrash)
-          .map((folder, index) => (
+          .map((folder) => (
             <DropDown
-              key={index}
+              key={folder.id}
               title={folder.title}
               listType="folder"
               id={folder.id}
