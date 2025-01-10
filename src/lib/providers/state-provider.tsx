@@ -72,9 +72,9 @@ type Action =
         workspaceId: string;
         fileId: string;
       };
-    };
+    }
 
-const initialState: AppState = { workspaces: [] };
+const initialState: AppState = { workspaces: []};
 
 const appReducer = (
   state: AppState = initialState,
@@ -273,6 +273,7 @@ const appReducer = (
           return workspace;
         }),
       };
+    
     default:
       return initialState;
   }
@@ -343,7 +344,13 @@ const AppStateProvider: React.FC<AppStateProviderProps> = ({ children }) => {
 
   return (
     <AppStateContext.Provider
-      value={{ state, dispatch, workspaceId, folderId, fileId }}
+      value={{
+        state,
+        dispatch,
+        workspaceId,
+        folderId,
+        fileId,
+      }}
     >
       {children}
     </AppStateContext.Provider>

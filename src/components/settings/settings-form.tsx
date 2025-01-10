@@ -216,18 +216,21 @@ const SettingsForm = () => {
 
     setUploadingProfilePic(true);
     if (response.avatarUrl)
-      await supabase.storage.from("avatars").remove([response.avatarUrl]);
+      await supabase.storage
+        .from("avatars")
+        .remove([response.avatarUrl.split("?")[0]]);
     await supabase.storage.from("avatars").upload(`avatar.${user.id}`, file);
 
     await changeProfilePicture(user);
     const avatarUrl = supabase.storage
       .from("avatars")
       .getPublicUrl(`avatar.${user.id}`).data.publicUrl;
-    const timeStampedUrl = `${avatarUrl}?${new Date().getTime()}`;
-    setAvatarUrl(timeStampedUrl);
+    // const timeStampedUrl = `${avatarUrl}?${new Date().getTime()}`;
+
+    setAvatarUrl(avatarUrl);
     setUploadingProfilePic(false);
   };
-  
+
   //get workspace detials
   useEffect(() => {
     const currentWorkspace = state.workspaces.find((w) => w.id === workspaceId);
@@ -248,21 +251,22 @@ const SettingsForm = () => {
     fetchCollaborators();
   }, [workspaceId]);
 
+  //fetching avatar details
+  const getAvatar = async () => {
+    if (!user) return;
+    const response = await findUser(user.id);
+    if (!response) return "";
+    const avatarUrl = response.avatarUrl
+      ? supabase.storage.from("avatars").getPublicUrl(response.avatarUrl).data
+          .publicUrl
+      : "";
+    // const timeStampedUrl = `${avatarUrl}?${new Date().getTime()}`;
+    setAvatarUrl(avatarUrl);
+  };
+
   useEffect(() => {
-    //fetching avatar details
-    const getAvatar = async () => {
-      if (!user) return;
-      const response = await findUser(user.id);
-      if (!response) return "";
-      const avatarUrl = response.avatarUrl
-        ? supabase.storage.from("avatars").getPublicUrl(response.avatarUrl).data
-            .publicUrl
-        : "";
-      const timeStampedUrl = `${avatarUrl}?${new Date().getTime()}`;
-      setAvatarUrl(timeStampedUrl);
-    };
     getAvatar();
-  }, [user, supabase.storage]);
+  }, []);
   return (
     <div className="flex gap-4 flex-col">
       <div className="flex flex-col ">
@@ -457,7 +461,8 @@ const SettingsForm = () => {
             {uploadingProfilePic ? (
               <Loader className="text-muted-foreground" />
             ) : (
-              <AvatarImage src={avatarUrl} />
+              // <AvatarImage src={avatarUrl} />
+              <AvatarImage src={`${avatarUrl}?t=${new Date().getTime()}`} />
             )}
             <AvatarFallback>
               <CypressProfileIcon />

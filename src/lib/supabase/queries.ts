@@ -281,6 +281,7 @@ export const findUser = async (userId: string) => {
   const response = await db.query.users.findFirst({
     where: (u, { eq }) => eq(u.id, userId),
   });
+  if(response=== undefined) return null;
   return response;
 };
 

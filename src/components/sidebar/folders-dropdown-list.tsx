@@ -30,6 +30,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
   //local state folders
   const { state, dispatch, folderId } = useAppState();
   const [folders, setFolders] = useState(workspaceFolders);
+  const [addingFolder, setAddingFolder] = useState(false);
 
   //effect set initial state server app state
   useEffect(() => {
@@ -48,7 +49,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
         },
       });
     }
-  }, [workspaceFolders, workspaceId]);
+  }, [workspaceFolders, workspaceId, dispatch]);
 
   //state
   useEffect(() => {
@@ -67,12 +68,13 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
       }
       return prevFolders;
     });
-  }, [ workspaceId]);
+  }, [workspaceId, state.workspaces]);
 
   //add folder
   const addFolderHandler = async () => {
+    setAddingFolder(true);
     // check for suscpription status
-    if (folders.length >= 3 && !subscription) {
+    if (!subscription && folders.length === 3) {
       setOpen(true);
       return;
     }
@@ -108,6 +110,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
         description: "Folder created successfully",
       });
     }
+    setAddingFolder(false);
   };
   return (
     <>
@@ -134,7 +137,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
         </span>
         <TooltipComponent message="Create Folder">
           <PlusIcon
-            onClick={addFolderHandler}
+            onClick={addingFolder=== true ? () => {} : addFolderHandler}
             size={16}
             className="group-hover/title:inline-block
             hidden
@@ -150,9 +153,9 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
       >
         {folders
           .filter((folder) => !folder.inTrash)
-          .map((folder) => (
+          .map((folder, index) => (
             <DropDown
-              key={folder.id}
+              key={index}
               title={folder.title}
               listType="folder"
               id={folder.id}

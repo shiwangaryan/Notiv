@@ -77,7 +77,12 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const { user } = useSupabaseUser();
   const { socket } = useSocket();
   const { toast } = useToast();
-  const { state, dispatch, workspaceId, folderId } = useAppState();
+  const {
+    state,
+    dispatch,
+    workspaceId,
+    folderId,
+  } = useAppState();
   const [quill, setQuill] = useState<any>(null);
   const [collaborators, setCollaborators] = useState<
     { id: string; email: string; avatarUrl: string }[]
@@ -335,6 +340,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   useEffect(() => {
     if (!fileId) return;
     const fetchInformation = async () => {
+     
       if (dirType === "file") {
         const { data: selectedDir, error } = await getFileDetails(fileId);
         if (error || !selectedDir) {
@@ -477,7 +483,17 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       quill.off("selection-change", selectionChangeHandler);
       if (saveTimeRef.current) clearTimeout(saveTimeRef.current);
     };
-  }, [quill, socket, fileId, user, details, folderId, workspaceId, dispatch, dirType]);
+  }, [
+    quill,
+    socket,
+    fileId,
+    user,
+    details,
+    folderId,
+    workspaceId,
+    dispatch,
+    dirType,
+  ]);
 
   // receiving data from other clients
   useEffect(() => {
@@ -628,7 +644,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         >
           <div>{breadCrumbs}</div>
           <div className="flex items-center gap-4">
-            
             <div className="flex items-center justify-center h-10">
               {collaborators?.map((collaborator) => (
                 <TooltipProvider key={collaborator.id}>
@@ -655,6 +670,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
                               .getPublicUrl(`avatar.${collaborator.id}`).data
                               .publicUrl
                           }`}
+                          // src={avatarUrl}
                           className="rounded-full"
                         />
                         <AvatarFallback>

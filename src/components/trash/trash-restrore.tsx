@@ -53,7 +53,7 @@ const TrashRestore = () => {
           ))}
         </>
       )}
-      {!!files.length && (
+      {!!files.length && !!folders.length && (
         <>
           <br />
           <Separator />
