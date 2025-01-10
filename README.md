@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Notiv
+<p id="description">
+  This project is a real-time collaboration application designed to enhance teamwork and productivity. It supports features like real-time editing, presence tracking, and payment management.
+</p> 
+<p>
+  The app combines state-of-the-art technologies like Next.js 13, Supabase, and custom-built components to offer a seamless user experience for collaborative environments.
+</p> 
+<p>✨ Check out the webiste here:  https://notiv.up.railway.app/</p>
+</br> 
+<h2>Project Screenshots:</h2> 
+</br> 
+<p> <!-- Add actual screenshot links --> 
+  <img src="https://github.com/user-attachments/assets/0f267455-d17b-4660-a5ab-119583d83c75" alt="project-screenshot" width="400" height="210/"> 
+  <img src="https://github.com/user-attachments/assets/a700c372-8c54-4909-993d-24cd71b019cd" alt="project-screenshot" width="400" height="210/"> 
+  <img src="https://github.com/user-attachments/assets/a31e220b-0814-4c3c-ad4a-8e21e30de316" alt="project-screenshot" width="400" height="210/"> 
+  <img src="https://github.com/user-attachments/assets/9419f0be-1138-4aa5-9320-c812e458c0eb" alt="project-screenshot" width="400" height="210/"> 
+  <img src="https://github.com/user-attachments/assets/abf1e674-d747-4966-a90f-51004083f1ce" alt="project-screenshot" width="400" height="210/"> 
+  <img src="https://github.com/user-attachments/assets/a49604a1-cf25-489c-97c6-5fec7aa4a583" alt="project-screenshot" width="400" height="210/"> 
 
-## Getting Started
+</p> 
+</br> 
+</br>
 
-First, run the development server:
+<h2>
+  🧐 Features
+ </h2> 
+</br> 
+Here are some of the best features of the app:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+*   ✒️ Real-time cursors: See collaborators' cursors in real-time while editing.
+*   📝 Real-time text selection: Highlight text and see other users' selections instantly.
+*   ⏱️ Real-time database and collaboration: Save and sync changes seamlessly with a real-time database.
+*   🟢 Real-time presence: Know who's online and actively working with presence tracking.
+*   🗑️ Move to trash functionality: Organize and manage deleted items effectively.
+*   🗺️ Free plan restrictions: Set limitations for free-tier users.
+*   💰 Take monthly payments: Handle subscription payments securely.
+*   📧 Custom email 2FA invitation: Enhance security with two-factor authentication for invites.
+*   👨‍👨‍👧‍👦 Real-time Collaboration: Collaborate in real-time with your team.
+*   ✒ Custom Rich text editor: Use a robust rich-text editor with advanced features.
+*   📚 Update profile settings: Manage and update user profiles.
+*   📍 Manage payments in a portal: Provide users with an intuitive payment management system.
+*   🔐 Custom Authentication: Implement secure and flexible user authentication.
+*   ✳️ Websockets: Ensure low-latency updates with Websockets.
+*   📣 Optimistic UI: Deliver instant feedback with an optimistic user interface.
+*   📱 Responsive design: Enjoy a smooth experience on all devices.
+
+</br> 
+<h2>
+  🛠️ Installation Steps:
+</h2> 
+</br> 
+<p>1. Clone this repository to your local machine:</p>
+
+```
+git clone https://github.com/shiwangaryan/Notiv.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<p>2. Navigate to the project directory and type the following code for getting all dependencies</p>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+<p>3. Set up your environment variables. Refer to the `.env` file for required variables.</p>
 
-## Learn More
+<p>4. Start the development server: </p>
 
-To learn more about Next.js, take a look at the following resources:
+```
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<p>5. Open your web browser and go to `http://localhost:3000` to see the app in action.</p>
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  
+ </br>
+<h2>💻 Built with</h2>
+</br>
+Technologies used in the project:
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*   Next.js
+*   Supabase
+*   Tailwind CSS
+*   Stripe
+*   Socket IO
+*   Drizzle ORM
