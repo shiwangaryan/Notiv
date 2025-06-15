@@ -1,6 +1,6 @@
-"use client";
+'use client';
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,7 +23,7 @@ import { actionLoginUser } from "@/lib/server-action/auth-actions";
 
 const LoginPage = () => {
   const router = useRouter();
-  const [submitError, setSubmiteError] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
   const form = useForm<z.infer<typeof FormSchema>>({
     mode: "onChange",
@@ -39,20 +39,23 @@ const LoginPage = () => {
     const { error } = await actionLoginUser(formData);
     if (error !== null) {
       form.reset();
-      setSubmiteError(error.message);
-      return;
+      setSubmitError(error.message);
+      // return;
     }
     router.replace("/dashboard");
   };
 
-  useEffect(() => {
-    if (submitError) {
-      setSubmiteError(""); // Reset submitError on any form change
-    }
-  }, [submitError]);
+  // useEffect(() => {
+  //   if (submitError) {
+  //     setSubmiteError(""); // Reset submitError on any form change
+  //   }
+  // }, [submitError]);
   return (
     <Form {...form}>
       <form
+        onChange={() => {
+          if (submitError) setSubmitError('');
+        }}
         //removed onchanged from here and used it in useEffect instead (form.watch())
         //as it was hindering with state rendering
         onSubmit={form.handleSubmit(onSubmit)}
@@ -96,7 +99,7 @@ const LoginPage = () => {
               <FormMessage />
             </FormItem>
           )}
-        ></FormField>
+        />
         <FormField
           disabled={isLoading}
           control={form.control}
@@ -109,7 +112,7 @@ const LoginPage = () => {
               <FormMessage />
             </FormItem>
           )}
-        ></FormField>
+        />
         {submitError && <FormMessage>{submitError}</FormMessage>}
         <div
           className="w-full flex flex-col justify-center items-center
@@ -132,8 +135,7 @@ const LoginPage = () => {
         </div>
         <span className="self-center">
           Does not have an account?
-          <Link href={"/signup"} className="text-primary-blue-300">
-            {" "}
+          <Link href="/signup" className="text-primary-blue-300">
             Sign up
           </Link>
         </span>

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import { User } from "@/lib/supabase/supabase.types";
 import React, { useEffect, useRef, useState } from "react";

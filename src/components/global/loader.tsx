@@ -1,4 +1,4 @@
-"use client"; // For Next.js client-side rendering
+'use client'; // For Next.js client-side rendering
 
 import React from "react";
 import Lottie from "react-lottie";

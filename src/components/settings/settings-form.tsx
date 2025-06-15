@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useToast } from "@/hooks/use-toast";
 import { useAppState } from "@/lib/providers/state-provider";
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";

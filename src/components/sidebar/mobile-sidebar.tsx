@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { Menu } from "lucide-react";
 import React, { useState } from "react";
 import CypressPageIcon from "../icons/cypressPageIcon";

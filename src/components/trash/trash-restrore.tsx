@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { appFoldersType, useAppState } from "@/lib/providers/state-provider";
 import { File as SupabaseFile } from "@/lib/supabase/supabase.types";
 import { FileIcon, FolderIcon } from "lucide-react";

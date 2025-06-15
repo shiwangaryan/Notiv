@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { MAX_FOLDERS_FREE_PLAN } from "@/lib/constants";
 import { useAppState } from "@/lib/providers/state-provider";
 import { Subscription } from "@/lib/supabase/supabase.types";

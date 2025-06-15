@@ -1,5 +1,3 @@
-'use client'
-
 // Inspired by react-hot-toast library
 import * as React from "react"
 
@@ -21,27 +19,28 @@ type ToasterToast = ToastProps & {
 let count = 0
 
 function genId() {
-  count = (count + 1) % Number.MAX_SAFE_INTEGER
+  count = (count + 1) % Number.MAX_VALUE
   return count.toString()
 }
 
 type Action =
   | {
-      type: "ADD_TOAST";
-      toast: ToasterToast;
+      type: "ADD_TOAST"
+      toast: ToasterToast
     }
   | {
-      type: "UPDATE_TOAST";
-      toast: Partial<ToasterToast>;
+      type: "UPDATE_TOAST"
+      toast: Partial<ToasterToast>
     }
   | {
-      type: "DISMISS_TOAST";
-      toastId?: ToasterToast["id"];
+      type: "DISMISS_TOAST"
+      toastId?: ToasterToast["id"]
     }
   | {
-      type: "REMOVE_TOAST";
-      toastId?: ToasterToast["id"];
-    };
+      type: "REMOVE_TOAST"
+      toastId?: ToasterToast["id"]
+    }
+
 
 interface State {
   toasts: ToasterToast[]
@@ -149,7 +148,7 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
-      onOpenChange: (open) => {
+      onOpenChange: (open: any) => {
         if (!open) dismiss()
       },
     },

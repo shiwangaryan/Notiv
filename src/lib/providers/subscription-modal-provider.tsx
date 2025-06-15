@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import SubscriptionModal from "@/components/global/subscription-modal";
 import {
   createContext,

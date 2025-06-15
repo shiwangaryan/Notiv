@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { AuthUser } from "@supabase/supabase-js";
 import { Subscription } from "../supabase/supabase.types";

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import { User, Workspace } from "@/lib/supabase/supabase.types";
 import { useRouter } from "next/navigation";

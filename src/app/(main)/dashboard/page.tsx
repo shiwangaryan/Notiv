@@ -5,6 +5,8 @@ import { getUserSubscriptionStatus } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 const DashboardPage = async () => {
   const supabase = await createServerSupabaseClient();
   const {

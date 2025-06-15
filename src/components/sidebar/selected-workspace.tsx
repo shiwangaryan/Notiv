@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabase";
 import { Workspace } from "@/lib/supabase/supabase.types";

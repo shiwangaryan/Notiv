@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useAppState } from "@/lib/providers/state-provider";
 import { Folder } from "@/lib/supabase/supabase.types";
 import React, { useEffect, useState } from "react";

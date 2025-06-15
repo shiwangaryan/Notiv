@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { useAppState } from "@/lib/providers/state-provider";
 import { useRouter } from "next/navigation";
 import React, { useMemo, useState } from "react";

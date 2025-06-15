@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -143,7 +143,7 @@ const SignupForm = () => {
         )}
         <span className="self-center">
           Already have an account?{" "}
-          <Link href={"/login"} className="text-primary-blue-300">
+          <Link href="/login" className="text-primary-blue-300">
             Login
           </Link>
         </span>

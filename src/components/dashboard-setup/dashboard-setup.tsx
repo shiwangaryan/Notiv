@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { AuthUser } from "@supabase/supabase-js";
 import React, { useState } from "react";
 import { v4 } from "uuid";
@@ -16,10 +16,10 @@ import { Subscription, Workspace } from "@/lib/supabase/supabase.types";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { CreateWorkspaceFormSchema } from "@/lib/types";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import { Loader } from "lucide-react";
+import Loader from "../global/loader";
 import { useAppState } from "@/lib/providers/state-provider";
 import { createClientSupabaseClient } from "@/lib/supabase/create-client-supabase";
 import { createWorkspace } from "@/lib/supabase/queries";
@@ -133,7 +133,8 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
         <form onSubmit={handleSubmit(onSubmit)}>
           <div
             className="flex
-          flex-col gap-4"
+          flex-col 
+          gap-4"
           >
             <div
               className="flex
