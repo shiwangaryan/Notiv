@@ -5,7 +5,7 @@
 <p>
   The app combines state-of-the-art technologies like Next.js 13, Supabase, and custom-built components to offer a seamless user experience for collaborative environments.
 </p> 
-<p>✨ Check out the webiste here:  https://notiv.up.railway.app/</p>
+<p>✨ Check out the webiste here:  https://notiv.vercel.app/</p>
 </br> 
 <h2>Project Screenshots:</h2> 
 </br> 
